@@ -17,12 +17,17 @@ class Player:
         self.inventory = []
 
 class Crop:
-    def __init__(self):
-        pass
+    def __init__(self, crop_name, price):
+        self.crop_name = crop_name
+        self.price = price
 
 class Farm:
     def __init__(self):
-        self.slots = [None, None]
+        self.slots = [None, None, None, None]
+
+    def nanam(self, index, crop):
+        if self.slots[index] is None:
+            self.slots[index] = crop
 
 
 class Game:
@@ -56,7 +61,21 @@ class Game:
             pass
 
     def slot_tanam(self):
-        print("")
+        print("==========Slot==========")
+        print("Pilih Slot untuk Menanam")
+        print("========================")
+        print("1. Slot #1\n2. Slot #2\n3. Slot #3\n4. Slot #4")
+        print("========================")
+        pilih = input("> ")
+
+        if pilih == "1":
+            pass
+        elif pilih == "2":
+            pass
+        elif pilih == "3":
+            pass
+        elif pilih == "4":
+            pass
 
 game = Game()
 game.farmMenu()
