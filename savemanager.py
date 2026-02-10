@@ -1,50 +1,43 @@
-import json
 import os
 import status
-import uang
 
-file_path = 'save.json'
+file_path = 'save.txt'
 
 class savemanager:
 
     @staticmethod
     def reset():
-        data = {
-            'day': 1,
-            'stamina': 100,
-            'max_stamina': 100,
-            'uang': 45
-        }
-        with open(file_path, 'w') as file:
-            json.dump(data, file, indent=4)
-        status.Status.set(1, 100, 100)
-        uang.uang.set(45)
+        status.Status.day = 1
+        status.Status.stamina = 100
+        status.Status.max_stamina = 100
+        status.uang.saldo = 45
+        savemanager.save()
         
 
     @staticmethod
     def save():
-        data ={
-            'day': status.Status.day,
-            'stamina': status.Status.stamina,
-            'max_stamina': status.Status.max_stamina,
-            'uang':uang.uang.saldo
-        }
         with open(file_path, 'w') as file:
-            json.dump(data, file, indent=4)
+            file.write(f'day={status.Status.day}\n')
+            file.write(f'stamina={status.Status.stamina}\n')
+            file.write(f'max_stamina={status.Status.max_stamina}\n')
+            file.write(f'uang={status.uang.saldo}\n')
 
     @staticmethod
     def load():
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as file:
-                data = json.load(file)
-                status.Status.set(
-                    data['day'],
-                    data['stamina'],
-                    data['max_stamina']
-                )
-                uang.uang.set(data['uang'])
-        else:
+        data = {}
+        if not os.path.exists(file_path):
             savemanager.reset()
+            return
+        with open(file_path, 'r') as file:
+          for line in file:
+              key, value = line.strip().split('=')
+              data[key] = int(value)
+        status.Status.set(
+            data['day'],
+            data['stamina'],
+            data['max_stamina']
+        )
+        status.uang.set(data['uang'])
 
-    
+      
          

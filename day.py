@@ -1,5 +1,4 @@
 import os
-import uang
 import status
 import savemanager
 
@@ -11,7 +10,7 @@ def hari():
     print('================')
     print('')
     print(f'    Day {day}')
-    print(f'Uang kamu: {uang.uang.cek()}')          
+    print(f'Uang kamu: {status.uang.cek()}')          
     print(f'stamina: {stamina}/{max_stamina}')
     print('')
     print('Pilih kegiatan')
@@ -52,10 +51,7 @@ def tidur():
         from day import hari
         hari()
 
-
-if __name__ == '__main__':
-    savemanager.savemanager.load()
-    hari()
+hari()
 
 
 
