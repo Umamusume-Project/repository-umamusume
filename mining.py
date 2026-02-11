@@ -1,5 +1,6 @@
 import random
 import time
+
 import os
 
 # ---------- DATA ----------
@@ -601,12 +602,13 @@ def main_menu():
         print("2. Shop")
         print("3. Upgrade")
         print("4. Inventory")
+        print('5. kembali ke menu utama')
         
         if merchant_active:
-            print("5. Merchant 🧙‍♂️")
-            print("6. Exit")
+            print("6. Merchant 🧙‍♂️")
+            print("7. Exit")
         else:
-            print("5. Exit")
+            print("0. Exit")
         
         choice = input("\n>> ").strip()
         
@@ -618,14 +620,17 @@ def main_menu():
             upgrade()
         elif choice == "4":
             inventory()
-        elif merchant_active and choice == "5":
+        elif choice == "5":
+            from day import hari
+            hari()
+        elif merchant_active and choice == "6":
             merchant()
-        elif (merchant_active and choice == "6") or (not merchant_active and choice == "5"):
+        elif (merchant_active and choice == "7") or (not merchant_active and choice == "5"):
             break
         else:
             print("Pilihan tidak valid, coba lagi.")
             pause(1.5)
 
-# ---------- RUN ----------
-if __name__ == "__main__":
-    main_menu()
+
+# if __name__ == "__main__":
+#     main_menu()
