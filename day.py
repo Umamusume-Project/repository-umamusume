@@ -3,7 +3,6 @@ import status
 import savemanager
 import farming
 
-
 farm = farming.Game()
 
 def hari():
@@ -20,8 +19,9 @@ def hari():
     print('Pilih kegiatan')
     print('1. farming')
     print('2. mining')
-    print('3. tidur (ganti hari dan pulihkan stamina)')
-    print('4. reset game (hapus data save)')
+    print('3. shop')
+    print('4. tidur (ganti hari, pulihkan stamina, dan simpan game)')
+    print('5. reset game (hapus data save)')
     print('Masukkan pilihanmu:')
     kegiatan = input('> ')
 
@@ -31,9 +31,12 @@ def hari():
         from mining import main_menu
         main_menu()
     elif kegiatan == '3':
+        from shop import Warung
+        Warung().toko()
+    elif kegiatan == '4':
         savemanager.savemanager.save()
         tidur()
-    elif kegiatan == '4':
+    elif kegiatan == '5':
         savemanager.savemanager.reset()
         print('Data save telah direset.')
         input('Tekan Enter untuk melanjutkan...')
@@ -57,13 +60,3 @@ def tidur():
         hari()
 
 hari()
-
-
-
-
-
-
-
-
-
-
