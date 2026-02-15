@@ -20,8 +20,9 @@ def hari():
     print('1. farming')
     print('2. mining')
     print('3. shop')
-    print('4. tidur (ganti hari, pulihkan stamina, dan simpan game)')
-    print('5. reset game (hapus data save)')
+    print('4. inventory')
+    print('5. tidur (ganti hari, pulihkan stamina, dan simpan game)')
+    print('6. reset game (hapus data save)')
     print('Masukkan pilihanmu:')
     kegiatan = input('> ')
 
@@ -33,10 +34,15 @@ def hari():
     elif kegiatan == '3':
         from shop import Warung
         Warung().toko()
+        hari()
     elif kegiatan == '4':
+        from inventory import inventory
+        inventory.menu()
+        hari()
+    elif kegiatan == '5':
         savemanager.savemanager.save()
         tidur()
-    elif kegiatan == '5':
+    elif kegiatan == '6':
         savemanager.savemanager.reset()
         print('Data save telah direset.')
         input('Tekan Enter untuk melanjutkan...')

@@ -1,62 +1,108 @@
 import os
 import status
+import inventory
 
+# ini udh aku lanjutin ya, jdi pas beli item udh langsung masuk ke inventory
+# tpi klo mau tambahin kaya fitur buat jual item tambahin aja -Fadli
 class Warung:
     def __init__(self):
-        self.wheat = 20
-        self.sawit = 45
-        self.ganja = 100
-        self.Biji = 60
-    def beli(self, item):
+        self.items = {
+            'Benih Wheat' : 20,
+            'Benih Sawit' : 45,
+            'Benih Ganja' : 100,
+            'Benih Tembakau' : 60,
+            'Benih Jagung' : 30
+        }
+        
+    def beli(self, item, jumlah):
             if item == '1':
-                if status.uang.cek() >= self.wheat:
-                    status.uang.kurangi_uang(self.wheat)
-                    print('Anda membeli Biji Wheat!')
+                total = self.items['Benih Wheat'] * int(jumlah)
+                if status.uang.cek() >= total:
+                    inventory.inventory.tambah_barang('Benih Wheat', int(jumlah), 'benih')
+                    status.uang.kurangi_uang(total)
+                    print(f'Anda membeli {jumlah} Biji Wheat!')
+                    print(f'Total biaya: {total} duit')
+                    print(f'Sisa uang: {status.uang.cek()} duit')
+                    input('')
                 else:
                     print('Uang tidak cukup untuk membeli Biji Wheat.')
+                    input('')
+
             elif item == '2':
-                if status.uang.cek() >= self.sawit:
-                    status.uang.kurangi_uang(self.sawit)
-                    print('Anda membeli Biji Sawit!')
+                total = self.items['Benih Sawit'] * int(jumlah)
+                if status.uang.cek() >= total:
+                    inventory.inventory.tambah_barang('Benih Sawit', int(jumlah), 'benih')
+                    status.uang.kurangi_uang(total)
+                    print(f'Anda membeli {jumlah} Biji Sawit!')
+                    print(f'Total biaya: {total} duit')
+                    print(f'Sisa uang: {status.uang.cek()} duit')
+                    input('')
                 else:
                     print('Uang tidak cukup untuk membeli Biji Sawit.')
+                    input('')
+
             elif item == '3':
-                if status.uang.cek() >= self.ganja:
-                    status.uang.kurangi_uang(self.ganja)
-                    print('Anda membeli Biji Ganja!')
+                total = self.items['Benih Ganja'] * int(jumlah)
+                if status.uang.cek() >= total:
+                    inventory.inventory.tambah_barang('Benih Ganja', int(jumlah), 'benih')
+                    status.uang.kurangi_uang(total)
+                    print(f'Anda membeli {jumlah} Biji Ganja!')
+                    print(f'Total biaya: {total} duit')
+                    print(f'Sisa uang: {status.uang.cek()} duit')
+                    input('')
                 else:
                     print('Uang tidak cukup untuk membeli Biji Ganja.')
+                    input('')
+
             elif item == '4':
-                if status.uang.cek() >= self.Biji:
-                    status.uang.kurangi_uang(self.Biji)
-                    print('Anda membeli Biji Biji!')
+                total = self.items['Benih Tembakau'] * int(jumlah)
+                if status.uang.cek() >= total:
+                    inventory.inventory.tambah_barang('Benih Tembakau', int(jumlah), 'benih')
+                    status.uang.kurangi_uang(total)
+                    print(f'Anda membeli {jumlah} Biji Tembakau!')
+                    print(f'Total biaya: {total} duit')
+                    print(f'Sisa uang: {status.uang.cek()} duit')
+                    input('')
                 else:
-                    print('Uang tidak cukup untuk membeli Biji Biji.')
-            else:
-                print('Pilihan tidak valid.')
+                    print('Uang tidak cukup untuk membeli Biji Tembakau.')
+                    input('')
+
+            elif item == '5':
+                total = self.items['Benih Jagung'] * int(jumlah)
+                if status.uang.cek() >= total:
+                    inventory.inventory.tambah_barang('Benih Jagung', int(jumlah), 'benih')
+                    status.uang.kurangi_uang(total)
+                    print(f'Anda membeli {jumlah} Biji Jagung!')
+                    print(f'Total biaya: {total} duit')
+                    print(f'Sisa uang: {status.uang.cek()} duit')
+                    input('')
+                else:
+                    print('Uang tidak cukup untuk membeli Biji Jagung.')
+                    input('')
 
     def toko(self):
+        while True:
             os.system('cls' if os.name == 'nt' else 'clear')
             print('==================')
             print('       Toko')
             print('==================')
             print('')
-            print('1. Biji wheat (20)')
-            print('2. Biji Sawit (45)')
-            print('3. Biji Ganja (100)')
-            print('4. Biji Biji (60)')
+            for idx, (item, price) in enumerate(self.items.items(), start=1):
+                print(f'{idx}. {item} ({price} duit)')
+            print('==================')
             print('0. Kembali')
             print('Masukkan pilihanmu:')
             jawaban = input('> ')
-            from day import hari
             if jawaban == '0':
-                hari()
-            elif jawaban in ['1', '2', '3', '4']:
-                self.beli(jawaban)
-                input('Tekan Enter untuk melanjutkan...')
-                self.toko()
+                break
+            elif jawaban in ['1', '2', '3', '4', '5']:
+                try:
+                    jumlah = int(input('Masukkan jumlah yang ingin dibeli: '))
+                    self.beli(jawaban, jumlah)
+                except ValueError:
+                    print('Input tidak valid.')
+                    input('')
             else:
                 print('Pilihan tidak valid.')
                 input('Tekan Enter untuk melanjutkan...')
-                self.toko()
             
