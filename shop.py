@@ -20,6 +20,7 @@ class Warung:
                 if status.uang.cek() >= total:
                     inventory.inventory.tambah_barang('Benih Wheat', int(jumlah), 'benih')
                     status.uang.kurangi_uang(total)
+                    print("====================================")
                     print(f'Anda membeli {jumlah} Biji Wheat!')
                     print(f'Total biaya: {total} duit')
                     print(f'Sisa uang: {status.uang.cek()} duit')
@@ -33,6 +34,7 @@ class Warung:
                 if status.uang.cek() >= total:
                     inventory.inventory.tambah_barang('Benih Sawit', int(jumlah), 'benih')
                     status.uang.kurangi_uang(total)
+                    print("====================================")
                     print(f'Anda membeli {jumlah} Biji Sawit!')
                     print(f'Total biaya: {total} duit')
                     print(f'Sisa uang: {status.uang.cek()} duit')
@@ -46,6 +48,7 @@ class Warung:
                 if status.uang.cek() >= total:
                     inventory.inventory.tambah_barang('Benih Ganja', int(jumlah), 'benih')
                     status.uang.kurangi_uang(total)
+                    print("====================================")
                     print(f'Anda membeli {jumlah} Biji Ganja!')
                     print(f'Total biaya: {total} duit')
                     print(f'Sisa uang: {status.uang.cek()} duit')
@@ -59,6 +62,7 @@ class Warung:
                 if status.uang.cek() >= total:
                     inventory.inventory.tambah_barang('Benih Tembakau', int(jumlah), 'benih')
                     status.uang.kurangi_uang(total)
+                    print("====================================")
                     print(f'Anda membeli {jumlah} Biji Tembakau!')
                     print(f'Total biaya: {total} duit')
                     print(f'Sisa uang: {status.uang.cek()} duit')
@@ -79,6 +83,9 @@ class Warung:
                 else:
                     print('Uang tidak cukup untuk membeli Biji Jagung.')
                     input('')
+
+    def jualItem(self):
+        pass #mau bikin fitur jual item, tapi blm jadi -Fadli
 
     def toko(self):
         while True:
@@ -106,3 +113,4 @@ class Warung:
                 print('Pilihan tidak valid.')
                 input('Tekan Enter untuk melanjutkan...')
             
+shop = Warung()

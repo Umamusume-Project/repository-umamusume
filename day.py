@@ -3,7 +3,6 @@ import status
 import savemanager
 import farming
 
-farm = farming.Game()
 
 def hari():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -27,7 +26,7 @@ def hari():
     kegiatan = input('> ')
 
     if kegiatan == '1':
-        farm.farmMenu()
+        farming.game.farmMenu()
     elif kegiatan == '2':
         from mining import main_menu
         main_menu()
@@ -61,6 +60,8 @@ def tidur():
         print('=================================')
         print('')
         input('tekan enter untuk melanjutkan...')
+        from farming import game
+        game.farm.next_day()
         status.Status.ganti_day()
         from day import hari
         hari()

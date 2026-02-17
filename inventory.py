@@ -1,6 +1,5 @@
 import os
 
-# ini code nya gua ubah dikit ya, ada beberapa yang gua hapus kaya farming, mining, dan shop, karena itu kan udh dibuat di file terpisah, yg gw ubah disini cmn gw tambahin class doang, tapi buat function tambah barang sama lihat invetory itu gua samaain kaya sebelumnya, palingan gw sesuain dikit aja, terus ini jg udh gw import ke file shop sm day, jdi klo misalnya beli item di shop itu udh langsung masuk ke inventory, trs klo mau akses ke inventory nya bisa dari day. -Fadli
 class Inventory:
     def __init__(self):
         self.inventory = {}
@@ -48,5 +47,4 @@ class Inventory:
             elif pilih == "0":
                 break
 
-# Module-level inventory instance for simple global access
 inventory = Inventory()
