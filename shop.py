@@ -2,9 +2,6 @@ import os
 import status
 import inventory
 
-# ini udh aku lanjutin ya, jdi pas beli item udh langsung masuk ke inventory
-# tpi klo mau tambahin kaya fitur buat jual item tambahin aja -Fadli
-#ok - Nevan
 class Warung:
     def __init__(self):
         self.items = {

@@ -151,8 +151,7 @@ class Game:
             elif pilih == "3":
                 shop.shop.toko()
             elif pilih == "0":
-                from day import hari
-                hari()
+                return
             else:
                 continue
 
@@ -234,7 +233,8 @@ class Game:
                 self.farm.panen(1)
                 break
             elif pilih == "3":
-                pass
+                self.farm.water(1)
+                break
             elif pilih == "0":
                 return
             else:
@@ -258,7 +258,8 @@ class Game:
                 self.farm.panen(2)
                 break
             elif pilih == "3":
-                pass
+                self.farm.water(2)
+                break
             elif pilih == "0":
                 return
             else:
@@ -282,11 +283,10 @@ class Game:
                 self.farm.panen(3)
                 break
             elif pilih == "3":
-                pass
+                self.farm.water(3)
+                break
             elif pilih == "0":
                 return
             else:
                 continue
     
-game = Game()
-farm = Farm()
