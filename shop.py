@@ -3,7 +3,8 @@ import status
 import inventory
 
 class Warung:
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.items = {
             'Benih Wheat' : 20,
             'Benih Sawit' : 45,
@@ -16,7 +17,7 @@ class Warung:
             if item == '1':
                 total = self.items['Benih Wheat'] * int(jumlah)
                 if status.uang.cek() >= total:
-                    inventory.inventory.tambah_barang('Benih Wheat', int(jumlah), 'benih')
+                    self.game.inventory.tambah_barang('Benih Wheat', int(jumlah), 'benih')
                     status.uang.kurangi_uang(total)
                     print("====================================")
                     print(f'Anda membeli {jumlah} Biji Wheat!')
@@ -30,7 +31,7 @@ class Warung:
             elif item == '2':
                 total = self.items['Benih Sawit'] * int(jumlah)
                 if status.uang.cek() >= total:
-                    inventory.inventory.tambah_barang('Benih Sawit', int(jumlah), 'benih')
+                    self.game.inventory.tambah_barang('Benih Sawit', int(jumlah), 'benih')
                     status.uang.kurangi_uang(total)
                     print("====================================")
                     print(f'Anda membeli {jumlah} Biji Sawit!')
@@ -44,7 +45,7 @@ class Warung:
             elif item == '3':
                 total = self.items['Benih Ganja'] * int(jumlah)
                 if status.uang.cek() >= total:
-                    inventory.inventory.tambah_barang('Benih Ganja', int(jumlah), 'benih')
+                    self.game.inventory.tambah_barang('Benih Ganja', int(jumlah), 'benih')
                     status.uang.kurangi_uang(total)
                     print("====================================")
                     print(f'Anda membeli {jumlah} Biji Ganja!')
@@ -58,7 +59,7 @@ class Warung:
             elif item == '4':
                 total = self.items['Benih Tembakau'] * int(jumlah)
                 if status.uang.cek() >= total:
-                    inventory.inventory.tambah_barang('Benih Tembakau', int(jumlah), 'benih')
+                    self.game.inventory.tambah_barang('Benih Tembakau', int(jumlah), 'benih')
                     status.uang.kurangi_uang(total)
                     print("====================================")
                     print(f'Anda membeli {jumlah} Biji Tembakau!')
@@ -72,7 +73,7 @@ class Warung:
             elif item == '5':
                 total = self.items['Benih Jagung'] * int(jumlah)
                 if status.uang.cek() >= total:
-                    inventory.inventory.tambah_barang('Benih Jagung', int(jumlah), 'benih')
+                    self.game.inventory.tambah_barang('Benih Jagung', int(jumlah), 'benih')
                     status.uang.kurangi_uang(total)
                     print(f'Anda membeli {jumlah} Biji Jagung!')
                     print(f'Total biaya: {total} duit')
@@ -88,7 +89,7 @@ class Warung:
         print('   Jual Barang')
         print('==================')
         print('')
-        inventory.inventory.tampilkan_barang()
+        self.game.inventory.tampilkan_barang()
         print('')
         print('==================')
 
@@ -122,4 +123,3 @@ class Warung:
                 print('Pilihan tidak valid.')
                 input('Tekan Enter untuk melanjutkan...')
             
-shop = Warung()

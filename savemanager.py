@@ -23,6 +23,9 @@ class Savemanager:
             file.write(f'stamina={status.Status.stamina}\n')
             file.write(f'max_stamina={status.Status.max_stamina}\n')
             file.write(f'uang={status.uang.saldo}\n')
+            file.write('\ninventory\n') 
+            for nama_barang, data in game.inventory.inventory.items():
+                file.write(f'{nama_barang}, {data["jumlah"]}, {data["tipe"]}\n')
             file.write('\nfarm\n')
             for crop in game.farm.slots:
                 if crop is None:
@@ -35,28 +38,44 @@ class Savemanager:
         data = {}
         farm_section = False
         farm_data = []
+        inventory_section = False
 
         with open(file_path, 'r') as file:
             lines = file.readlines()
+            game.inventory.inventory = {}
 
             for line in lines:
                 line = line.strip()
                 if line == '':
                     continue
+                if line == 'inventory':
+                    inventory_section = True
+                    farm_section = False
+                    continue
                 if line == 'farm':
                     farm_section = True
+                    inventory_section = False
                     continue
-                if not farm_section:
-                    parts = line.split('=')
-                    if len(parts) == 2:
-                        key, value = parts
-                        try:
-                            data[key] = int(value)
-                        except ValueError:
-                            data[key] = value
-                else:
+                # baca data
+                if inventory_section:
+                    nama_barang, jumlah, tipe = line.split(', ')
+                    game.inventory.inventory[nama_barang] = {
+                        'jumlah': int(jumlah),
+                        'tipe': tipe
+                    }
+                    continue
+                elif farm_section:
                     farm_data.append(line)
+                    continue
+                part = line.split('=')
+                if len(part) == 2:
+                    key, value = part
+                    try:
+                        data[key] = int(value)
+                    except ValueError:
+                        data[key] = value
 
+            #set data
             if 'day' in data and 'stamina' in data and 'max_stamina' in data:
                 status.Status.set(
                     data['day'],

@@ -35,10 +35,10 @@ def hari():
             main_menu()
         elif kegiatan == '3':
             from shop import Warung
-            Warung().toko()
+            game.shop.toko()
         elif kegiatan == '4':
-            from inventory import inventory
-            inventory.menu()
+            from inventory import Inventory
+            game.inventory.menu()
         elif kegiatan == '5':
             Savemanager.save(game)
             tidur()

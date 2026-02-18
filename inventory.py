@@ -47,4 +47,3 @@ class Inventory:
             elif pilih == "0":
                 break
 
-inventory = Inventory()
