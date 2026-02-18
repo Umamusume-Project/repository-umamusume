@@ -6,13 +6,13 @@ import os
 # ---------- DATA ----------
 merchant_cooldown = 0
 MERCHANT_COOLDOWN_DAYS = 3
-merchant_qty_range = (1, 4)
+merchant_qty_range = (1, 3)
 
 enemies = {
-    "Zombie": {"power": 1.0, "lose": 25},
-    "Skeleton": {"power": 2.0, "lose": 50},
-    "Spider": {"power": 0.7, "lose": 15},
-    "Creeper": {"power": 3.0, "lose": 100},
+    "Zombie": {"power": 1.0, "lose": 15},
+    "Skeleton": {"power": 2.0, "lose": 35},
+    "Spider": {"power": 0.7, "lose": 10},
+    "Creeper": {"power": 3.0, "lose": 80},
     "Wither": {"power": 4.0, "lose": 0},
     "Boss": {"power": 6.0, "lose": 0},
 }
@@ -37,14 +37,15 @@ events = [
     "Duaarrrr...",
     "Masuk lebih dalam...",
     "Nyangkut...",
-    "Tadi itu creeper?...",
-    "Ada Santa...",
+    "Tadi itu creeper ya?...",
+    "Ada Santa lewat...",
     "Nambang nikel...",
     "Nambang lagi...",
-    "Batu yang ini berkilau...",
+    "Batu ini kelihatan berkilau...",
     "Cape bro...",
-    "Yang tadi itu diamond?...",
-    "tadi ada steve lewat...",
+    "Yang tadi diamond beneran?...",
+    "Tadi ada Steve lewat...",
+    "Sekali lagi...",
 ]
 
 player = {
@@ -69,6 +70,7 @@ boss_encounter_count = 0
 merchant_timer = random.randint(3, 5)
 merchant_request = None
 merchant_active = False
+merchant_cooldown = 0
 
 # ---------- UTIL ----------
 def clear():
@@ -129,11 +131,11 @@ def roll_enemy(phase):
 
 def fight(enemy):
     clear()
-    print(f"⚔️ Encounter: {enemy}")
+    print(f"⚔️ wah ketemu: {enemy}")
    
     level = get_penalty_level()
     if level > 0:
-        print(f"⚠️ Penalty Level: {level}")
+        print(f"⚠️ Level Penalti: {level}")
    
     pause()
    
@@ -149,22 +151,22 @@ def fight(enemy):
     if enemy == "Boss":
         base *= 2.5
         scale *= 1.5
-        print("🔥 THIS IS THE FINAL BATTLE 🔥")
-        print("The Boss is overwhelmingly powerful!")
+        print("🔥 INI PERTARUNGAN AKHIR 🔥")
+        print("Boss sangat sangat kuat!")
    
     enemy_power = base * scale
     chance = player["defense"] / (player["defense"] + enemy_power)
    
-    print(f"Enemy strength: {enemy_power:.1f}")
-    print(f"Your win chance: {chance*100:.1f}%")
+    print(f"Kekuatan musuh: {enemy_power:.1f}")
+    print(f"Peluang menang kamu: {chance*100:.1f}%")
     pause(2)
    
     if random.random() < chance:
-        print(f"✅ You defeated {enemy}!")
+        print(f"✅ Kamu berhasil mengalahkan {enemy}!")
         pause()
         return True
     else:
-        print(f"💀 You were defeated by {enemy}...")
+        print(f"💀 yah kau kalah sama {enemy}...")
         pause()
         return False
 
@@ -175,15 +177,17 @@ def handle_lose(enemy):
     if enemy in ["Zombie", "Skeleton", "Spider", "Creeper"]:
         lose_amount = int(enemies[enemy]["lose"] * money_mult)
         player["money"] = max(0, player["money"] - lose_amount)
-        print(f"💸 Lost ${lose_amount} (x{money_mult:.1f} penalty)")
+        print(f"💸 Kehilangan ${lose_amount} (penalti x{money_mult:.1f})")
    
     elif enemy == "Wither":
         stat = random.choice(["power", "defense", "speed"])
         if player[stat] > 1:
             player[stat] -= 1
-            print(f"⬇️ Wither cursed you! {stat.capitalize()} -1")
+            print(f"⬇️ Wither mengutukmu! {stat.capitalize()} turun 1")
         else:
-            print(f"⬇️ Wither tried to curse, but {stat.capitalize()} already minimum!")
+            print(f"⬇️ Wither mencoba mengutuk, tapi {stat.capitalize()} sudah minimal!")
+            pause(1)
+            print("Wither: Dasar skill issue!")
    
     elif enemy == "Boss":
         money_div = 2 + (level // 2)
@@ -193,17 +197,17 @@ def handle_lose(enemy):
         for s in ["power", "defense", "speed"]:
             player[s] = max(1, player[s] // stat_div)
        
-        print("💀 THE BOSS HAS CRUSHED YOU...")
-        print(f"Money divided by {money_div}, stats by {stat_div} (Level {level})")
+        print("💀 BOSS MENGGEPREK KAU...")
+        print(f"Uang dibagi {money_div}, stat dibagi {stat_div} (Level {level})")
    
     pause(2)
 
 def handle_win(enemy):
     if enemy == "Spider":
         babies = random.randint(1, 5)
-        print(f"🕷️ {babies} baby spiders spawned")
+        print(f"🕷️ Muncul {babies} baby spider!")
         for _ in range(babies):
-            print("👶 Baby spider defeated. Slowed.")
+            print("👶 Baby spider dikalahkan. Kamu jadi lambat.")
             player["slow"] += 1
             pause(0.5)
    
@@ -211,7 +215,7 @@ def handle_win(enemy):
         ore = random.choice(list(ores))
         qty = random.randint(1, 2)
         player["inventory"][ore] = player["inventory"].get(ore, 0) + qty
-        print(f"💎 Creeper dropped {qty} {ore}")
+        print(f"💎 Creeper menjatuhkan {qty} {ore}")
    
     if enemy == "Boss":
         global boss_alive, boss_cooldown_remaining, boss_encounter_count
@@ -224,33 +228,34 @@ def handle_win(enemy):
         player["money"] += money_bonus
        
         print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        print(f"👑 BOSS DEFEATED! (Encounter #{boss_encounter_count}) 👑")
+        print(f"👑 BOSS DIKALAHKAN! (Pertarungan ke-{boss_encounter_count}) 👑")
         print(f"+{qty} {ore}")
         print(f"+ ${money_bonus}")
-        print("The mine trembles in relief...")
+        print("Tambang bergetar lega...")
         print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         pause(4)
        
         boss_cooldown_remaining = BOSS_COOLDOWN_DAYS
 
 # ---------- CHEST SYSTEM ----------
-def open_chest(player):
+def open_chest():
     clear()
     print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    print("      🛡️  YOU FOUND A MYSTERIOUS CHEST!  🛡️")
-    print("         It opens with a magical glow...   ")
+    print(" 🛡️ KAMU MENEMUKAN PETI MISTERIUS! 🛡️")
+    print(" Peti nya  silau banget gila... ")
     print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
-    
+   
     time.sleep(2)
-    
-    amount = int(random.expovariate(1 / 50)) + 10
-    amount = min(amount, 300)
-    
-    player["money"] = player.get("money", 0) + amount
-    
-    print(f"💰 You found {amount} money!")
-    
+   
+    amount = int(random.expovariate(1 / 30)) + 10
+    amount = min(amount, 200)
+   
+    player["money"] += amount
+   
+    print(f"💰 Kamu menemukan ${amount} uang!")
+   
     time.sleep(3)
+
 # ---------- GAMEPLAY ----------
 def mine():
     global boss_warning, boss_alive, boss_defeated
@@ -259,7 +264,7 @@ def mine():
    
     clear()
     phase = get_phase()
-    print(f"📅 Day {player['day']} | Phase {phase}\n")
+    print(f"📅 Hari {player['day']} | Fase {phase}\n")
    
     effective_speed = player["speed"] + player["bonus_speed"]
     duration = max(2, 6 - effective_speed + player["slow"])
@@ -278,8 +283,8 @@ def mine():
         boss_alive = True
         boss_encounter_count += 1
         print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        print(" ⚠️ THE GROUND IS SHAKING... ⚠️")
-        print(f" THE BOSS AWAKENS (Encounter #{boss_encounter_count})")
+        print(" ⚠️ TANAH BERGETAR HEBAT... ⚠️")
+        print(f" BOSS BANGKIT (Pertarungan ke-{boss_encounter_count})")
         print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         pause(3)
         boss_next_spawn_day = None
@@ -290,7 +295,7 @@ def mine():
             boss_next_spawn_day = player["day"] + random.randint(1, 4)
    
     if boss_warning > 0:
-        print(f"⚠️ BOSS WARNING {boss_warning}/3")
+        print(f"⚠️ PERINGATAN BOSS {boss_warning}/3")
         boss_warning -= 1
         pause()
    
@@ -315,7 +320,7 @@ def mine():
                 boss_alive = False
                 boss_cooldown_remaining = random.randint(10, 16)
    
-    # ---------- NORMAL ORE ----------
+    # ---------- ORE BIASA ----------
     if not enemy or won_fight:
         ore = random.choice(list(ores))
         power_level = player["power"]
@@ -324,8 +329,8 @@ def mine():
         qty = random.randint(min_qty, max_qty)
        
         player["inventory"][ore] = player["inventory"].get(ore, 0) + qty
-        print(f"\n🎉 Found {qty} {ore}")
-        print("🏠 Going home...")
+        print(f"\n🎉 Menemukan {qty} {ore}")
+        print("🏠 Pulang ke rumah...")
         pause(2)
    
     # ---------- AKHIR HARI ----------
@@ -333,7 +338,7 @@ def mine():
    
     # ---------- MERCHANT LOGIC ----------
     if merchant_active:
-        print("🧙‍♂️ The merchant has left for now...")
+        print("🧙‍♂️ Pedagang sudah pergi untuk sementara...")
         pause(1.5)
         merchant_active = False
         merchant_request = None
@@ -344,14 +349,14 @@ def mine():
             if merchant_cooldown == 0:
                 merchant_active = True
                 merchant_request = generate_merchant()
-                print("🧙‍♂️ A traveling merchant has arrived!")
+                print("🧙‍♂️ Pedagang keliling datang!")
                 pause(1.5)
         else:
             merchant_timer -= 1
             if merchant_timer <= 0:
                 merchant_active = True
                 merchant_request = generate_merchant()
-                print("🧙‍♂️ A traveling merchant has arrived!")
+                print("🧙‍♂️ Pedagang keliling datang!")
                 pause(1.5)
    
     # ---------- CHEST LOGIC ----------
@@ -364,7 +369,7 @@ def upgrade():
     print("⚙️ UPGRADE\n")
     for i, s in enumerate(["power", "defense", "speed"], 1):
         print(f"{i}. {s.capitalize()} (${upgrade_cost[s] * player[s]})")
-    print("X. Back")
+    print("X. Kembali")
     c = input("\n>> ").lower()
     if c not in ["1", "2", "3", "x"]:
         return
@@ -375,34 +380,34 @@ def upgrade():
     if player["money"] >= cost:
         player["money"] -= cost
         player[stat] += 1
-        print(f"⬆️ {stat} upgraded")
+        print(f"⬆️ {stat.capitalize()} berhasil di-upgrade!")
     else:
-        print("❌ Uang tidak cukup, jangan ngutang")
+        print("❌ Uang tidak cukup, jangan ngutang!")
     pause()
 
 def merchant():
     global merchant_active, merchant_request
     while True:
         clear()
-        print("🧙‍♂️ Traveling Merchant\n")
-        print("📦 Your Inventory:")
+        print("🧙‍♂️ Pedagang Keliling\n")
+        print("📦 Inventarismu:")
         if not player["inventory"]:
-            print("- (empty)")
+            print("- (kosong)")
         else:
             for o, q in player["inventory"].items():
                 print(f"- {o}: {q}")
-        print("\n📝 Merchant wants:")
+        print("\n📝 Pedagang ingin membeli:")
         for ore, qty in merchant_request["wanted"].items():
-            status = "✔ SOLD" if ore in merchant_request["sold"] else ""
-            print(f"- {ore} x{qty} {status}")
-        print(f"\n💎 Price multiplier: x{merchant_request['multiplier']}")
-        print(f"🎁 Bonus per ore (first time): ${merchant_request['bonus']}")
-        print("\n0. Back")
+            status_text = "✔ SUDAH DIJUAL" if ore in merchant_request["sold"] else ""
+            print(f"- {ore} x{qty} {status_text}")
+        print(f"\n💎 Pengali harga: x{merchant_request['multiplier']}")
+        print(f"🎁 Bonus per jenis (sekali): ${merchant_request['bonus']}")
+        print("\n0. Kembali")
         choice_map = {}
         idx = 1
         for ore in merchant_request["wanted"]:
             if ore not in merchant_request["sold"]:
-                print(f"{idx}. Sell {ore}")
+                print(f"{idx}. Jual {ore}")
                 choice_map[str(idx)] = ore
                 idx += 1
         choice = input("\n>> ")
@@ -414,7 +419,7 @@ def merchant():
         need = merchant_request["wanted"][ore]
         owned = player["inventory"].get(ore, 0)
         if owned < need:
-            print(f"❌ You need exactly {need} {ore}")
+            print(f"❌ Kamu harus menjual tepat {need} {ore}")
             pause(1.5)
             continue
         base = need * ores[ore]
@@ -424,10 +429,10 @@ def merchant():
             merchant_request["sold"].add(ore)
         player["inventory"][ore] -= need
         player["money"] += total
-        print(f"💰 Sold {need} {ore} for ${total}")
+        print(f"💰 Berhasil menjual {need} {ore} seharga ${total}")
         pause(1.5)
         if len(merchant_request["sold"]) == len(merchant_request["wanted"]):
-            print("\n🧙‍♂️ Merchant is satisfied.")
+            print("\n🧙‍♂️ Pedagang puas dan pergi.")
             pause(2)
             return
 
@@ -435,31 +440,31 @@ def main_menu():
     while True:
         clear()
         print("=== TEXT MINER RPG ===\n")
-        print(f"Day {player['day']} mining")
+        print(f"Hari {player['day']} - Penambangan")
         print(f" Uang: {status.uang.cek()}")
         print(f"⛏ Power: {player['power']} | 🛡 Defense: {player['defense']} | ⚡ Speed: {player['speed']} (+{player['bonus_speed']})")
        
         level = get_penalty_level()
         if level > 0:
-            print(f"⚠️ Penalty Level: {level}")
+            print(f"⚠️ Level Penalti: {level}")
        
         if merchant_active:
-            print("🧙‍♂️ Merchant is here!")
+            print("🧙‍♂️ Pedagang sedang ada di sini!")
         elif merchant_cooldown > 0:
-            print(f"🧙‍♂️ Merchant arrives in {merchant_cooldown} day(s)")
+            print(f"🧙‍♂️ Pedagang datang lagi dalam {merchant_cooldown} hari")
         else:
-            print(f"🧙‍♂️ Merchant arrives in {merchant_timer} day(s)")
+            print(f"🧙‍♂️ Pedagang datang lagi dalam {merchant_timer} hari")
        
         print("\nMenu:")
-        print("1. Mine")
+        print("1. Mulai Menambang")
         print("2. Upgrade")
-        print('3. kembali ke menu utama')
+        print("3. kembali ke menu utama")
        
         if merchant_active:
-            print("6. Merchant 🧙‍♂️")
-            print("7. Exit")
+            print("6. Temui Pedagang 🧙‍♂️")
+            print("7. Keluar")
         else:
-            print("0. Exit")
+            print("0. Keluar")
        
         choice = input("\n>> ").strip()
        
@@ -477,6 +482,3 @@ def main_menu():
         else:
             print("Pilihan tidak valid, coba lagi.")
             pause(1.5)
-
-    if __name__ == "__main__":
-        main_menu()
