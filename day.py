@@ -5,6 +5,7 @@ import farming
 
 
 def hari():
+    savemanager.savemanager.load()
     os.system('cls' if os.name == 'nt' else 'clear')
     day, stamina, max_stamina = status.Status.cek_status()
     print('================')

@@ -1,5 +1,6 @@
 import random
 import time
+import status
 
 import os
 
@@ -18,33 +19,33 @@ enemies = {
 }
 
 ores = {
-    "Coal": 10,
-    "Iron": 25,
-    "Crystal": 50,
-    "Emerald": 75,
-    "Diamond": 100,
+    "Coal": 5,
+    "Iron": 15,
+    "Crystal": 25,
+    "Emerald": 50,
+    "Diamond": 70,
 }
 
 upgrade_cost = {
-    "power": 100,
-    "defense": 120,
-    "speed": 80,
+    "power": 45,
+    "defense": 60,
+    "speed": 55,
 }
 
 events = [
-    "Mining...",
-    "Digging straight...",
-    "Break time...",
-    "Going deeper...",
-    "Almost there...",
-    "I miss the sky...",
-    "Spookyy...",
-    "Mining nikel...",
-    "one more block...",
-    "This ore looks shiny...",
-    "Im feeling lucky today...",
-    "Did i see diamond?",
-    "Give me 500 diamond pls...",
+    "Nambang...",
+    "Nambang ke bawah...",
+    "Duaarrrr...",
+    "Masuk lebih dalam...",
+    "Nyangkut...",
+    "Tadi itu creeper?...",
+    "Ada Santa...",
+    "Nambang nikel...",
+    "Nambang lagi...",
+    "Batu yang ini berkilau...",
+    "Cape bro...",
+    "Yang tadi itu diamond?...",
+    "tadi ada steve lewat...",
 ]
 
 player = {
@@ -291,7 +292,7 @@ def open_chest():
     reward_type = random.choice(rewards)
     
     if reward_type == "money":
-        amount = random.randint(250, 500)
+        amount = random.randint(10, 100)
         player["money"] += amount
         print(f"💰 You found {amount} money!")
     
@@ -322,7 +323,7 @@ def open_chest():
             player["bonus_speed"] += 10
             print("⚡ +10 bonus speed (free, upgrade cost unchanged)!")
         else:
-            amount = random.randint(300, 600)
+            amount = random.randint(10, 100)
             player["money"] += amount
             print(f"⚡ Speed boost already unlocked! You found {amount} money instead.")
     
@@ -472,29 +473,29 @@ def mine():
         open_chest()
 
 # ---------- MENU ----------
-def shop():
-    clear()
-    print("🛒 SHOP\n")
-    if not player["inventory"]:
-        print("Inventory kosong. Jangan bengong")
-        pause()
-        return
-    for i, (o, q) in enumerate(player["inventory"].items(), 1):
-        print(f"{i}. {o} x{q} (${ores[o]})")
-    c = input("\nChoose ore (X to exit): ").lower()
-    if c == "x":
-        return
-    try:
-        idx = int(c) - 1
-        ore = list(player["inventory"].keys())[idx]
-        qty = player["inventory"][ore]
-        gain = qty * ores[ore]
-        player["money"] += gain
-        del player["inventory"][ore]
-        print(f"💰 Sold {ore} for ${gain}")
-        pause()
-    except:
-        pass
+# def shop():
+#     clear()
+#     print("🛒 SHOP\n")
+#     if not player["inventory"]:
+#         print("Inventory kosong. Jangan bengong")
+#         pause()
+#         return
+#     for i, (o, q) in enumerate(player["inventory"].items(), 1):
+#         print(f"{i}. {o} x{q} (${ores[o]})")
+#     c = input("\nChoose ore (X to exit): ").lower()
+#     if c == "x":
+#         return
+#     try:
+#         idx = int(c) - 1
+#         ore = list(player["inventory"].keys())[idx]
+#         qty = player["inventory"][ore]
+#         gain = qty * ores[ore]
+#         player["money"] += gain
+#         del player["inventory"][ore]
+#         print(f"💰 Sold {ore} for ${gain}")
+#         pause()
+#     except:
+#         pass
 
 def upgrade():
     clear()
@@ -517,15 +518,15 @@ def upgrade():
         print("❌ Uang tidak cukup, jangan ngutang")
     pause()
 
-def inventory():
-    clear()
-    print("🎒 INVENTORY\n")
-    if not player["inventory"]:
-        print("Kosong. Kayak jiwaku")
-    else:
-        for o, q in player["inventory"].items():
-            print(f"- {o}: {q}")
-    pause()
+# def inventory():
+#     clear()
+#     print("🎒 INVENTORY\n")
+#     if not player["inventory"]:
+#         print("Kosong. Kayak jiwaku")
+#     else:
+#         for o, q in player["inventory"].items():
+#             print(f"- {o}: {q}")
+#     pause()
 
 def merchant():
     global merchant_active, merchant_request
@@ -582,8 +583,8 @@ def main_menu():
     while True:
         clear()
         print("=== TEXT MINER RPG ===\n")
-        print(f"Day {player['day']}")
-        print(f"💰 Money: ${player['money']}")
+        print(f"Day {player['day']} mining")
+        print(f" Uang: {status.uang.cek()}")
         print(f"⛏ Power: {player['power']} | 🛡 Defense: {player['defense']} | ⚡ Speed: {player['speed']} (+{player['bonus_speed']})")
         
         level = get_penalty_level()
@@ -599,10 +600,8 @@ def main_menu():
         
         print("\nMenu:")
         print("1. Mine")
-        print("2. Shop")
-        print("3. Upgrade")
-        print("4. Inventory")
-        print('5. kembali ke menu utama')
+        print("2. Upgrade")
+        print('3. kembali ke menu utama')
         
         if merchant_active:
             print("6. Merchant 🧙‍♂️")
@@ -610,22 +609,18 @@ def main_menu():
         else:
             print("0. Exit")
         
-        choice = input("\n>> ").strip()
+        choice = int(input("\n>> ")).strip()
         
-        if choice == "1":
+        if choice == 1:
             mine()
-        elif choice == "2":
-            shop()
-        elif choice == "3":
+        elif choice == 2:
             upgrade()
-        elif choice == "4":
-            inventory()
-        elif choice == "5":
+        elif choice == 3:
             from day import hari
             hari()
-        elif merchant_active and choice == "6":
+        elif merchant_active and choice == 6:
             merchant()
-        elif (merchant_active and choice == "7") or (not merchant_active and choice == "5"):
+        elif (merchant_active and choice == 7) or (not merchant_active and choice == 0):
             break
         else:
             print("Pilihan tidak valid, coba lagi.")

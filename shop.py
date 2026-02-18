@@ -4,6 +4,7 @@ import inventory
 
 # ini udh aku lanjutin ya, jdi pas beli item udh langsung masuk ke inventory
 # tpi klo mau tambahin kaya fitur buat jual item tambahin aja -Fadli
+#ok - Nevan
 class Warung:
     def __init__(self):
         self.items = {
@@ -85,7 +86,15 @@ class Warung:
                     input('')
 
     def jualItem(self):
-        pass #mau bikin fitur jual item, tapi blm jadi -Fadli
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print('==================')
+        print('   Jual Barang')
+        print('==================')
+        print('')
+        inventory.inventory.tampilkan_barang()
+        print('')
+        print('==================')
+
 
     def toko(self):
         while True:
@@ -96,12 +105,15 @@ class Warung:
             print('')
             for idx, (item, price) in enumerate(self.items.items(), start=1):
                 print(f'{idx}. {item} ({price} duit)')
+            print('6. Jual Barang')
             print('==================')
             print('0. Kembali')
             print('Masukkan pilihanmu:')
             jawaban = input('> ')
             if jawaban == '0':
                 break
+            elif jawaban == '6':
+                self.jualItem()
             elif jawaban in ['1', '2', '3', '4', '5']:
                 try:
                     jumlah = int(input('Masukkan jumlah yang ingin dibeli: '))
