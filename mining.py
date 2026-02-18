@@ -91,7 +91,7 @@ def generate_merchant():
     return {
         "wanted": {ore: random.randint(merchant_qty_range[0], merchant_qty_range[1]) for ore in wanted},
         "multiplier": round(random.uniform(1.4, 1.9), 2),
-        "bonus": random.randint(50, 150),
+        "bonus": random.randint(50, 100),
         "sold": set()
     }
 
@@ -186,7 +186,7 @@ def handle_lose(enemy):
             print(f"⬇️ Wither mengutukmu! {stat.capitalize()} turun 1")
         else:
             print(f"⬇️ Wither mencoba mengutuk, tapi {stat.capitalize()} sudah minimal!")
-            pause(1)
+            pause()
             print("Wither: Dasar skill issue!")
    
     elif enemy == "Boss":
