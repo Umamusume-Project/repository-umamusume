@@ -13,25 +13,31 @@ class Warung:
             '5': {'nama': 'Benih Jagung',   'harga': 30}
         }
         self.sell_prices = {
+            # Hasil panen (farming)
             'Wheat': 35,
             'Sawit': 90,
             'Ganja': 200,
             'Tembakau': 90,
-            'Jagung': 50
+            'Jagung': 50,
+            # Ore dari mining (tambah ini supaya bisa dijual)
+            'Coal': 10,
+            'Iron': 25,
+            'Crystal': 40,
+            'Emerald': 80,
+            'Diamond': 150
         }
-        
-#-------------------Func Beli-------------------
+    
+    # ------------------- Func Beli -------------------
     def beli(self, pilihan, jumlah):
         if pilihan not in self.items:
             print('Pilihan tidak valid.')
             input('')
             return
         
-        item   = self.items[pilihan]
-        nama   = item['nama']
-        total  = item['harga'] * jumlah
-        player = self.game.player
-
+        item = self.items[pilihan]
+        nama = item['nama']
+        total = item['harga'] * jumlah
+        
         if status.uang.cek() >= total:
             status.uang.kurangi_uang(total)
             self.game.inventory.tambah_barang(nama, jumlah, 'benih')
@@ -41,45 +47,53 @@ class Warung:
             print(f'Sisa uang   : {status.uang.cek()} duit')
         else:
             print(f'Uang tidak cukup untuk membeli {nama}.')
-
         input('')
-
-#--------------------Func Jual-------------------
+    
+    # ------------------- Func Jual -------------------
     def jualItem(self):
         os.system('cls' if os.name == 'nt' else 'clear')
         print('==================')
         print('   Jual Barang')
         print('==================')
         print('')
-        list_barang = [(nama, data) for nama, data in self.game.inventory.inventory.items() if data.get('tipe') == 'hasil panen']
-
+        
+        # Tampilkan barang tipe 'hasil panen' ATAU 'ore'
+        list_barang = [
+            (nama, data) for nama, data in self.game.inventory.inventory.items()
+            if data.get('tipe') in ['hasil panen', 'ore']
+        ]
+        
         if not list_barang:
-            print('Kosong!')
+            print('Tidak ada barang yang bisa dijual (hasil panen / ore).')
             input('')
             return
         
         for idx, (nama, data) in enumerate(list_barang, start=1):
-            harga = self.sell_prices.get(nama, 0) * data['jumlah']
-            print(f"{idx}. {nama} : {data['jumlah']} tersedia (Harga jual: {harga} duit)")
-
+            harga_per_unit = self.sell_prices.get(nama, 0)
+            total_harga = harga_per_unit * data['jumlah']
+            print(f"{idx}. {nama} ({data['tipe']}) : {data['jumlah']} tersedia (Harga jual: {total_harga} duit)")
+        
         print('')
         print('==================')
         pilih = input('Masukkan nomor barang yang ingin dijual: ')
+        
         try:
             idx = int(pilih) - 1
-
             if 0 <= idx < len(list_barang):
                 jumlah = int(input('Masukkan jumlah yang ingin dijual: '))
-                if jumlah <= 0 or jumlah > self.game.inventory.inventory[list_barang[idx][0]]['jumlah']:
-                    print('Invalid input')
+                selected_nama, selected_data = list_barang[idx]
+                stok_tersedia = selected_data['jumlah']
+                
+                if jumlah <= 0 or jumlah > stok_tersedia:
+                    print('Jumlah tidak valid atau melebihi stok.')
                     input('')
                     return
                 
-                selected_nama, selected_data = list_barang[idx]
                 harga_jual = self.sell_prices.get(selected_nama, 0) * jumlah
                 
                 status.uang.tambah_uang(harga_jual)
                 self.game.inventory.inventory[selected_nama]['jumlah'] -= jumlah
+                
                 if self.game.inventory.inventory[selected_nama]['jumlah'] <= 0:
                     del self.game.inventory.inventory[selected_nama]
                 
@@ -89,10 +103,10 @@ class Warung:
                 print('Pilihan tidak valid.')
         except ValueError:
             print('Input tidak valid.')
-
-        input('')
-
-# -------------------UI-------------------
+        
+        input('Tekan Enter untuk melanjutkan...')
+    
+    # ------------------- UI -------------------
     def menu_toko(self):
         os.system('cls' if os.name == 'nt' else 'clear')
         print('==================')
@@ -105,8 +119,8 @@ class Warung:
         print('==================')
         print('0. Kembali')
         print('Masukkan pilihanmu:')
-
-# ----------------Main--------------------
+    
+    # ---------------- Main --------------------
     def toko(self):
         while True:
             self.menu_toko()            
@@ -124,11 +138,9 @@ class Warung:
                         continue
                     else:
                         self.beli(jawaban, jumlah)
-
                 except ValueError:
                     print('Input tidak valid.')
                     input('')
             else:
                 print('Pilihan tidak valid.')
                 input('Tekan Enter untuk melanjutkan...')
-            
