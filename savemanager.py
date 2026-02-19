@@ -3,7 +3,9 @@ import status
 import farming
 import inventory
 
-file_path = 'save.txt'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+file_path = os.path.join(BASE_DIR, 'save.txt')
 
 class Savemanager:
 
