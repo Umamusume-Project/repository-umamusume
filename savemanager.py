@@ -39,11 +39,6 @@ class Savemanager:
         farm_section = False
         farm_data = []
         inventory_section = False
-        if not os.path.exist(file_path):
-            Savemanager.save(game)
-            print('savedata baru sudah dibuat')
-            return
-
         with open(file_path, 'r') as file:
             lines = file.readlines()
             game.inventory.inventory = {}
