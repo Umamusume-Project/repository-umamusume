@@ -37,7 +37,6 @@ class Farm:
 
     def plant(self, index):
         if self.slots[index] is None:
-            # Check if there are any seeds (benih) in inventory
             benih_list = [(nama, data) 
                           for nama, data in self.game.inventory.inventory.items() 
                           if data.get('tipe') == 'benih']
@@ -59,7 +58,6 @@ class Farm:
                     selected_crop, selected_data = benih_list[idx]
                     self.slots[index] = Crop(selected_crop.replace("Benih ", ""))
                     
-                    # Reduce inventory
                     self.game.inventory.inventory[selected_crop]['jumlah'] -= 1
                     if self.game.inventory.inventory[selected_crop]['jumlah'] <= 0:
                         del self.game.inventory.inventory[selected_crop]
@@ -108,7 +106,6 @@ class Farm:
             input("Enter untuk kembali...")
             return
         
-        # Tambahkan hasil panen ke inventory
         hasil = crop.name
         self.game.inventory.tambah_barang(hasil, 1, 'hasil panen')
         self.slots[index] = None
@@ -126,7 +123,6 @@ class Farm:
 # --------------MENU UTAMA----------------
 class Game:
     def __init__(self):
-        self.running = False
         self.player = Player()
         self.farm = Farm(self)
         self.inventory = Inventory()
@@ -156,138 +152,59 @@ class Game:
             else:
                 continue
 
-    def slot_tanam(self):
+    def slots(self, idx):
         while True:
+            idx += 1
+            crop = self.farm.slots[idx-1]
+            if crop is None:
+                ready = '-'
+                crop_name = 'Kosong'
+            else:
+                ready = 'Siap panen!' if crop.is_ready() else f'Belum siap panen ({crop.crop_age}/{crop.grow_time[crop.name]})'
+                crop_name = crop.name
+            watered = "Sudah disiram" if crop and crop.watered_today else "Belum disiram"
             os.system("cls")
-            print("==========Slot==========")
-            print("Pilih Slot untuk Menanam")
+            print(f"==========Lahan {idx}==========")
+            print(f'Tanaman yang ditanam: {crop_name}')
+            print(f'Sudah siap panen? {ready}')
+            print(f'Status: {watered}')
             print("========================")
-            print("1. Slot #1\n2. Slot #2\n3. Slot #3\n4. Slot #4")
+            print("1. Tanam\n2. Panen\n3. Siram")
             print("========================")
             print("0. Kembali?")
             pilih = input("> ")
 
             if pilih == "1":
-                self.slot_1()
+                self.farm.plant(idx-1)
+                break
             elif pilih == "2":
-                self.slot_2()
+                self.farm.panen(idx-1)
+                break
             elif pilih == "3":
-                self.slot_3()
-            elif pilih == "4":
-                self.slot_4()
+                self.farm.water(idx-1)
+                break
             elif pilih == "0":
                 return
             else:
                 continue
 
-    def slot_info(self, index):
-        crop = self.farm.slots[index]
-        if crop is not None:
-            ready = "Siap panen!" if crop.is_ready() else f"Belum siap ({crop.crop_age}/{crop.grow_time.get(crop.name)} hari)"
-            watered = "Sudah disiram" if crop.watered_today else "Belum disiram"
-            print(f"Tanaman yang ditanam: {crop.name}")
-            print(f"Sudah siap panen? {ready}")
-            print(f"Status siram: {watered}")
-        else:
-            print("Tanaman yang ditanam: Kosong")
-            print(f"Sudah siap panen? -")
-
-    def slot_1(self):
+    def slot_tanam(self):
         while True:
             os.system("cls")
-            print("===============Slot 1===============")
-            self.slot_info(0)
-            print("====================================")
-            print("1. Tanam\n2. Panen\n3. Siram\n0. Kembali?")
-            print("====================================")
+            print("==========Slot==========")
+            print("Pilih Lahan untuk Menanam")
+            print("========================")
+            print("1. Lahan #1\n2. Lahan #2\n3. Lahan #3\n4. Lahan #4")
+            print("========================")
+            print("0. Kembali?")
             pilih = input("> ")
 
-            if pilih == "1":
-                self.farm.plant(0)
-                break
-            elif pilih == "2":
-                self.farm.panen(0)
-                break
-            elif pilih == "3":
-                self.farm.water(0)
-                break
-            elif pilih == "0":
-                return
-            else:
-                continue
-
-    def slot_2(self):
-        while True:
-            os.system("cls")
-            print("==========Slot 2==========")
-            self.slot_info(1)
-            print(f"Sudah siap panen?\t ")
-            print("==========================")
-            print("1. Tanam\n2. Panen\n3. Siram\n0. Kembali?")
-            print("==========================")
-            pilih = input("> ")
-
-            if pilih == "1":
-                self.farm.plant(1)
-                break
-            elif pilih == "2":
-                self.farm.panen(1)
-                break
-            elif pilih == "3":
-                self.farm.water(1)
-                break
-            elif pilih == "0":
-                return
-            else:
-                continue
-
-    def slot_3(self):
-        while True:
-            os.system("cls")
-            print("==========Slot 3==========")
-            self.slot_info(2)
-            print(f"Sudah siap panen?\t ")
-            print("==========================")
-            print("1. Tanam\n2. Panen\n3. Siram\n0. Kembali?")
-            print("==========================")
-            pilih = input("> ")
-
-            if pilih == "1":
-                self.farm.plant(2)
-                break
-            elif pilih == "2":
-                self.farm.panen(2)
-                break
-            elif pilih == "3":
-                self.farm.water(2)
-                break
-            elif pilih == "0":
-                return
-            else:
-                continue
-
-    def slot_4(self):
-        while True:
-            os.system("cls")
-            print("==========Slot 4==========")
-            self.slot_info(3) 
-            print(f"Sudah siap panen?\t ")
-            print("==========================")
-            print("1. Tanam\n2. Panen\n3. Siram\n0. Kembali?")
-            print("==========================")
-            pilih = input("> ")
-
-            if pilih == "1":
-                self.farm.plant(3)
-                break
-            elif pilih == "2":
-                self.farm.panen(3)
-                break
-            elif pilih == "3":
-                self.farm.water(3)
-                break
-            elif pilih == "0":
-                return
-            else:
-                continue
-    
+            try:
+                idx = int(pilih) - 1
+                if 0 <= idx < len(self.farm.slots):
+                    self.slots(idx)
+                elif pilih == "0":
+                    return
+            except ValueError:
+                print('Invalid Input!')
+                input('')

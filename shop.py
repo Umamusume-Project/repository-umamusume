@@ -6,116 +6,125 @@ class Warung:
     def __init__(self, game):
         self.game = game
         self.items = {
-            'Benih Wheat' : 20,
-            'Benih Sawit' : 45,
-            'Benih Ganja' : 100,
-            'Benih Tembakau' : 60,
-            'Benih Jagung' : 30
+            '1': {'nama': 'Benih Wheat',    'harga': 20},
+            '2': {'nama': 'Benih Sawit',    'harga': 45},
+            '3': {'nama': 'Benih Ganja',    'harga': 100},
+            '4': {'nama': 'Benih Tembakau', 'harga': 60},
+            '5': {'nama': 'Benih Jagung',   'harga': 30}
+        }
+        self.sell_prices = {
+            'Wheat': 35,
+            'Sawit': 90,
+            'Ganja': 200,
+            'Tembakau': 90,
+            'Jagung': 50
         }
         
-    def beli(self, item, jumlah):
-            if item == '1':
-                total = self.items['Benih Wheat'] * int(jumlah)
-                if status.uang.cek() >= total:
-                    self.game.inventory.tambah_barang('Benih Wheat', int(jumlah), 'benih')
-                    status.uang.kurangi_uang(total)
-                    print("====================================")
-                    print(f'Anda membeli {jumlah} Biji Wheat!')
-                    print(f'Total biaya: {total} duit')
-                    print(f'Sisa uang: {status.uang.cek()} duit')
-                    input('')
-                else:
-                    print('Uang tidak cukup untuk membeli Biji Wheat.')
-                    input('')
+#-------------------Func Beli-------------------
+    def beli(self, pilihan, jumlah):
+        if pilihan not in self.items:
+            print('Pilihan tidak valid.')
+            input('')
+            return
+        
+        item   = self.items[pilihan]
+        nama   = item['nama']
+        total  = item['harga'] * jumlah
+        player = self.game.player
 
-            elif item == '2':
-                total = self.items['Benih Sawit'] * int(jumlah)
-                if status.uang.cek() >= total:
-                    self.game.inventory.tambah_barang('Benih Sawit', int(jumlah), 'benih')
-                    status.uang.kurangi_uang(total)
-                    print("====================================")
-                    print(f'Anda membeli {jumlah} Biji Sawit!')
-                    print(f'Total biaya: {total} duit')
-                    print(f'Sisa uang: {status.uang.cek()} duit')
-                    input('')
-                else:
-                    print('Uang tidak cukup untuk membeli Biji Sawit.')
-                    input('')
+        if status.uang.cek() >= total:
+            status.uang.kurangi_uang(total)
+            self.game.inventory.tambah_barang(nama, jumlah, 'benih')
+            print("====================================")
+            print(f'Anda membeli {jumlah} {nama}!')
+            print(f'Total biaya : {total} duit')
+            print(f'Sisa uang   : {status.uang.cek()} duit')
+        else:
+            print(f'Uang tidak cukup untuk membeli {nama}.')
 
-            elif item == '3':
-                total = self.items['Benih Ganja'] * int(jumlah)
-                if status.uang.cek() >= total:
-                    self.game.inventory.tambah_barang('Benih Ganja', int(jumlah), 'benih')
-                    status.uang.kurangi_uang(total)
-                    print("====================================")
-                    print(f'Anda membeli {jumlah} Biji Ganja!')
-                    print(f'Total biaya: {total} duit')
-                    print(f'Sisa uang: {status.uang.cek()} duit')
-                    input('')
-                else:
-                    print('Uang tidak cukup untuk membeli Biji Ganja.')
-                    input('')
+        input('')
 
-            elif item == '4':
-                total = self.items['Benih Tembakau'] * int(jumlah)
-                if status.uang.cek() >= total:
-                    self.game.inventory.tambah_barang('Benih Tembakau', int(jumlah), 'benih')
-                    status.uang.kurangi_uang(total)
-                    print("====================================")
-                    print(f'Anda membeli {jumlah} Biji Tembakau!')
-                    print(f'Total biaya: {total} duit')
-                    print(f'Sisa uang: {status.uang.cek()} duit')
-                    input('')
-                else:
-                    print('Uang tidak cukup untuk membeli Biji Tembakau.')
-                    input('')
-
-            elif item == '5':
-                total = self.items['Benih Jagung'] * int(jumlah)
-                if status.uang.cek() >= total:
-                    self.game.inventory.tambah_barang('Benih Jagung', int(jumlah), 'benih')
-                    status.uang.kurangi_uang(total)
-                    print(f'Anda membeli {jumlah} Biji Jagung!')
-                    print(f'Total biaya: {total} duit')
-                    print(f'Sisa uang: {status.uang.cek()} duit')
-                    input('')
-                else:
-                    print('Uang tidak cukup untuk membeli Biji Jagung.')
-                    input('')
-
+#--------------------Func Jual-------------------
     def jualItem(self):
         os.system('cls' if os.name == 'nt' else 'clear')
         print('==================')
         print('   Jual Barang')
         print('==================')
         print('')
-        self.game.inventory.tampilkan_barang()
+        list_barang = [(nama, data) for nama, data in self.game.inventory.inventory.items() if data.get('tipe') == 'hasil panen']
+
+        if not list_barang:
+            print('Kosong!')
+            input('')
+            return
+        
+        for idx, (nama, data) in enumerate(list_barang, start=1):
+            harga = self.sell_prices.get(nama, 0) * data['jumlah']
+            print(f"{idx}. {nama} : {data['jumlah']} tersedia (Harga jual: {harga} duit)")
+
         print('')
         print('==================')
+        pilih = input('Masukkan nomor barang yang ingin dijual: ')
+        try:
+            idx = int(pilih) - 1
 
+            if 0 <= idx < len(list_barang):
+                jumlah = int(input('Masukkan jumlah yang ingin dijual: '))
+                if jumlah <= 0 or jumlah > self.game.inventory.inventory[list_barang[idx][0]]['jumlah']:
+                    print('Invalid input')
+                    input('')
+                    return
+                
+                selected_nama, selected_data = list_barang[idx]
+                harga_jual = self.sell_prices.get(selected_nama, 0) * jumlah
+                
+                status.uang.tambah_uang(harga_jual)
+                self.game.inventory.inventory[selected_nama]['jumlah'] -= jumlah
+                if self.game.inventory.inventory[selected_nama]['jumlah'] <= 0:
+                    del self.game.inventory.inventory[selected_nama]
+                
+                print(f'Anda menjual {jumlah} {selected_nama} seharga {harga_jual} duit!')
+                print(f'Saldo saat ini: {status.uang.cek()} duit')
+            else:
+                print('Pilihan tidak valid.')
+        except ValueError:
+            print('Input tidak valid.')
 
+        input('')
+
+# -------------------UI-------------------
+    def menu_toko(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print('==================')
+        print('       Toko')
+        print('==================')
+        print('')
+        for pilihan, data in self.items.items():
+            print(f"{pilihan}. {data['nama']} ({data['harga']} duit)")
+        print('6. Jual Barang')
+        print('==================')
+        print('0. Kembali')
+        print('Masukkan pilihanmu:')
+
+# ----------------Main--------------------
     def toko(self):
         while True:
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print('==================')
-            print('       Toko')
-            print('==================')
-            print('')
-            for idx, (item, price) in enumerate(self.items.items(), start=1):
-                print(f'{idx}. {item} ({price} duit)')
-            print('6. Jual Barang')
-            print('==================')
-            print('0. Kembali')
-            print('Masukkan pilihanmu:')
+            self.menu_toko()            
             jawaban = input('> ')
             if jawaban == '0':
                 break
             elif jawaban == '6':
                 self.jualItem()
-            elif jawaban in ['1', '2', '3', '4', '5']:
+            elif jawaban in self.items:
                 try:
                     jumlah = int(input('Masukkan jumlah yang ingin dibeli: '))
-                    self.beli(jawaban, jumlah)
+                    if jumlah <= 0:
+                        print('Jumlah harus lebih dari 0.')
+                        input('')
+                        continue
+                    else:
+                        self.beli(jawaban, jumlah)
+
                 except ValueError:
                     print('Input tidak valid.')
                     input('')
