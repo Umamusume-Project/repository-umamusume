@@ -1,23 +1,22 @@
 import os
 import status
 import farming
-import inventory
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 file_path = os.path.join(BASE_DIR, 'save.txt')
 
 class Savemanager:
-
     @staticmethod
     def reset(game):
         status.Status.day = 1
         status.Status.stamina = 100
         status.Status.max_stamina = 100
         status.uang.saldo = 45
+        game.inventory.inventory = {}
+        for i in range(4):
+            game.farm.slots[i] = None
         Savemanager.save(game)
-        
-
+    
     @staticmethod
     def save(game):
         with open(file_path, 'w') as file:
@@ -25,7 +24,7 @@ class Savemanager:
             file.write(f'stamina={status.Status.stamina}\n')
             file.write(f'max_stamina={status.Status.max_stamina}\n')
             file.write(f'uang={status.uang.saldo}\n')
-            file.write('\ninventory\n') 
+            file.write('\ninventory\n')
             for nama_barang, data in game.inventory.inventory.items():
                 file.write(f'{nama_barang}, {data["jumlah"]}, {data["tipe"]}\n')
             file.write('\nfarm\n')
@@ -34,17 +33,20 @@ class Savemanager:
                     file.write("none\n")
                 else:
                     file.write(f'{crop.name}, {crop.crop_age}, {crop.watered_today}\n')
-
+    
     @staticmethod
     def load(game):
+        if not os.path.exists(file_path):
+            return
+        
         data = {}
         farm_section = False
         farm_data = []
         inventory_section = False
+        
         with open(file_path, 'r') as file:
             lines = file.readlines()
             game.inventory.inventory = {}
-
             for line in lines:
                 line = line.strip()
                 if line == '':
@@ -57,17 +59,18 @@ class Savemanager:
                     farm_section = True
                     inventory_section = False
                     continue
-                # baca data
+                
                 if inventory_section:
                     nama_barang, jumlah, tipe = line.split(', ')
                     game.inventory.inventory[nama_barang] = {
                         'jumlah': int(jumlah),
-                        'tipe': tipe
+                        'tipe': tipe.strip()
                     }
                     continue
                 elif farm_section:
                     farm_data.append(line)
                     continue
+                
                 part = line.split('=')
                 if len(part) == 2:
                     key, value = part
@@ -75,27 +78,24 @@ class Savemanager:
                         data[key] = int(value)
                     except ValueError:
                         data[key] = value
-
-            #set data
-            if 'day' in data and 'stamina' in data and 'max_stamina' in data:
-                status.Status.set(
-                    data['day'],
-                    data['stamina'],
-                    data['max_stamina']
-                )
-            if 'uang' in data:
-                try:
-                    status.uang.set(int(data['uang']))
-                except Exception:
-                    status.uang.set(data['uang'])
-
-            for i in range(4):
-                if farm_data[i] == 'none':
-                    game.farm.slots[i] = None
-                else:
-                    nama, umur, watered = farm_data[i].split(', ')
-                    crop = farming.Crop(nama)
-                    crop.crop_age = int(umur)
-                    crop.watered_today = watered == 'True'
-                    game.farm.slots[i] = crop
-            
+        
+        # Set data
+        if 'day' in data and 'stamina' in data and 'max_stamina' in data:
+            status.Status.set(
+                data['day'],
+                data['stamina'],
+                data['max_stamina']
+            )
+        if 'uang' in data:
+            status.uang.set(int(data['uang']))
+        
+        # Load farm slots (asumsi 4 slot)
+        for i in range(min(4, len(farm_data))):
+            if farm_data[i] == 'none':
+                game.farm.slots[i] = None
+            else:
+                nama, umur, watered = farm_data[i].split(', ')
+                crop = farming.Crop(nama.strip())
+                crop.crop_age = int(umur)
+                crop.watered_today = watered.strip() == 'True'
+                game.farm.slots[i] = crop
