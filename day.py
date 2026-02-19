@@ -32,7 +32,7 @@ def hari():
             game.farmMenu()
         elif kegiatan == '2':
             from mining import main_menu
-            main_menu()
+            main_menu(game)
         elif kegiatan == '3':
             from shop import Warung
             game.shop.toko()
@@ -62,3 +62,6 @@ def tidur():
         status.Status.ganti_day()
 
 hari()
+
+if __name__ == "__main__":
+    hari()
