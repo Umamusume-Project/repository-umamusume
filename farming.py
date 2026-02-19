@@ -1,13 +1,4 @@
 import os
-import inventory
-import status
-from shop import Warung
-from inventory import Inventory
-
-class Player:
-    def __init__(self):
-        self.day, self.stamina, self.max_stamina = status.Status.cek_status()
-        self.uang = status.uang.cek()
 
 class Crop:
     def __init__(self, name):
@@ -30,15 +21,15 @@ class Crop:
         return self.crop_age >= self.grow_time[self.name]
 
 class Farm:
-    def __init__(self, game):
+    def __init__(self, game, player):
         self.slots = [None, None, None, None]
-        self.player = Player()
+        self.player = player
         self.game = game
 
-    def plant(self, index):
+    def plant(self, player, index):
         if self.slots[index] is None:
             benih_list = [(nama, data) 
-                          for nama, data in self.game.inventory.inventory.items() 
+                          for nama, data in player.inventory.items.items() 
                           if data.get('tipe') == 'benih']
             
             if not benih_list:
@@ -58,13 +49,13 @@ class Farm:
                     selected_crop, selected_data = benih_list[idx]
                     self.slots[index] = Crop(selected_crop.replace("Benih ", ""))
                     
-                    self.game.inventory.inventory[selected_crop]['jumlah'] -= 1
-                    if self.game.inventory.inventory[selected_crop]['jumlah'] <= 0:
-                        del self.game.inventory.inventory[selected_crop]
+                    player.inventory.items.items[selected_crop]['jumlah'] -= 1
+                    if player.inventory.items.items[selected_crop]['jumlah'] <= 0:
+                        del player.inventory.items.items[selected_crop]
                     
                     print(f"{selected_crop} Berhasil ditanam!")
-                    input("Enter untuk kembali...")
-                    status.Status.kurangi_stamina(10)
+                    input("Enter untuk kembali...") 
+                    player.kurangi_stamina(10)
                 else:
                     print("Pilihan tidak valid!")
                     input("Enter untuk kembali...")
@@ -76,7 +67,7 @@ class Farm:
             print("Lahan sudah terisi!")
             input("Enter untuk kembali...")
 
-    def water(self, index):
+    def water(self, player, index):
         crop = self.slots[index]
         if crop is None:
             print("Tidak ada tanaman di slot ini!")
@@ -89,11 +80,11 @@ class Farm:
             return
         
         crop.watered_today = True
-        status.Status.kurangi_stamina(5)
+        player.kurangi_stamina(5)
         print(f"{crop.name} berhasil disiram!")
         input("Enter untuk kembali...")
           
-    def panen(self, index):
+    def panen(self, player, index):
         crop = self.slots[index]
         if crop is None:
             print("Tidak ada tanaman di lahan ini!")
@@ -109,7 +100,7 @@ class Farm:
         hasil = crop.name
         self.game.inventory.tambah_barang(hasil, 1, 'hasil panen')
         self.slots[index] = None
-        status.Status.kurangi_stamina(10)
+        player.kurangi_stamina(10)
         print(f'{hasil} berhasil dipanen!')
         input('')
 
@@ -122,19 +113,16 @@ class Farm:
 
 # --------------MENU UTAMA----------------
 class Game:
-    def __init__(self):
-        self.player = Player()
-        self.farm = Farm(self)
-        self.inventory = Inventory()
-        self.shop = Warung(self)
+    def __init__(self, player):
+        self.farm = Farm(self, player)
 
-    def farmMenu(self):
+    def farmMenu(self,player, warung):
         while True:
             os.system("cls")
             print("==========Farm Game==========")
-            print(f"day\t:{status.Status.day}")
-            print(f"duit\t:{status.uang.saldo}")
-            print(f"stamina\t:{status.Status.stamina}")
+            print(f"day\t:{player.day}")
+            print(f"duit\t:{player.uang}")
+            print(f"stamina\t:{player.stamina}")
             print("=============================")
             print("1. Pilih Lahan\n2. Inventory\n3. Shop")
             print("=============================")
@@ -146,7 +134,7 @@ class Game:
             elif pilih == "2":
                 self.inventory.menu()
             elif pilih == "3":
-                self.shop.toko()
+                warung.menu_toko()
             elif pilih == "0":
                 return
             else:

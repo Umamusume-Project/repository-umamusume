@@ -1,10 +1,10 @@
 import os
-import status
 import inventory
 
 class Warung:
-    def __init__(self, game):
-        self.game = game
+    def __init__(self, player, farm):
+        self.game = farm
+        self.player = player
         self.items = {
             '1': {'nama': 'Benih Wheat',    'harga': 20},
             '2': {'nama': 'Benih Sawit',    'harga': 45},
@@ -28,7 +28,7 @@ class Warung:
         }
     
     # ------------------- Func Beli -------------------
-    def beli(self, pilihan, jumlah):
+    def beli(self, player, pilihan, jumlah):
         if pilihan not in self.items:
             print('Pilihan tidak valid.')
             input('')
@@ -38,19 +38,19 @@ class Warung:
         nama = item['nama']
         total = item['harga'] * jumlah
         
-        if status.uang.cek() >= total:
-            status.uang.kurangi_uang(total)
+        if player.uang >= total:
+            player.kurangi_uang(total)
             self.game.inventory.tambah_barang(nama, jumlah, 'benih')
             print("====================================")
             print(f'Anda membeli {jumlah} {nama}!')
             print(f'Total biaya : {total} duit')
-            print(f'Sisa uang   : {status.uang.cek()} duit')
+            print(f'Sisa uang   : {player.uang} duit')
         else:
             print(f'Uang tidak cukup untuk membeli {nama}.')
         input('')
     
     # ------------------- Func Jual -------------------
-    def jualItem(self):
+    def jualItem(self, player):
         os.system('cls' if os.name == 'nt' else 'clear')
         print('==================')
         print('   Jual Barang')
@@ -59,7 +59,7 @@ class Warung:
         
         # Tampilkan barang tipe 'hasil panen' ATAU 'ore'
         list_barang = [
-            (nama, data) for nama, data in self.game.inventory.inventory.items()
+            (nama, data) for nama, data in player.inventory.items.items()
             if data.get('tipe') in ['hasil panen', 'ore']
         ]
         
@@ -91,14 +91,14 @@ class Warung:
                 
                 harga_jual = self.sell_prices.get(selected_nama, 0) * jumlah
                 
-                status.uang.tambah_uang(harga_jual)
-                self.game.inventory.inventory[selected_nama]['jumlah'] -= jumlah
+                player.tambah_uang(harga_jual)
+                player.inventory.items.items[selected_nama]['jumlah'] -= jumlah
                 
-                if self.game.inventory.inventory[selected_nama]['jumlah'] <= 0:
-                    del self.game.inventory.inventory[selected_nama]
+                if player.inventory.items.items[selected_nama]['jumlah'] <= 0:
+                    del player.inventory.items.items[selected_nama]
                 
                 print(f'Anda menjual {jumlah} {selected_nama} seharga {harga_jual} duit!')
-                print(f'Saldo saat ini: {status.uang.cek()} duit')
+                print(f'Saldo saat ini: {player.uang} duit')
             else:
                 print('Pilihan tidak valid.')
         except ValueError:

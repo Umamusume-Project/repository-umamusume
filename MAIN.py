@@ -1,22 +1,25 @@
 import os
-import status
+from player import Player
 from savemanager import Savemanager
+from shop import Warung
+from inventory import Inventory
 from farming import Game
 
-game = Game()
-Savemanager.load(game)
+player = Player()
+farm = Game(player)
+warung = Warung(player, farm)
+Savemanager.load(player, farm)
 
-def hari():
+def hari(player):
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        day, stamina, max_stamina = status.Status.cek_status()
         print('================')
         print('     projek   ')
         print('================')
         print('')
-        print(f'    Day {day}')
-        print(f'Uang kamu: {status.uang.cek()}')          
-        print(f'stamina: {stamina}/{max_stamina}')
+        print(f'    Day {player.day}')
+        print(f'Uang kamu: {player.uang}')          
+        print(f'stamina: {player.stamina}/{player.max_stamina}')
         print('')
         print('Pilih kegiatan')
         print('1. farming')
@@ -29,21 +32,19 @@ def hari():
         kegiatan = input('> ')
 
         if kegiatan == '1':
-            game.farmMenu()
+            farm.farmMenu()
         elif kegiatan == '2':
             from mining import main_menu
-            main_menu(game)
+            main_menu(farm)
         elif kegiatan == '3':
-            from shop import Warung
-            game.shop.toko()
+            warung.menu_toko()
         elif kegiatan == '4':
-            from inventory import Inventory
-            game.inventory.menu()
+            player.inventory.menu()
         elif kegiatan == '5':
-            Savemanager.save(game)
+            Savemanager.save(farm)
             tidur()
         elif kegiatan == '6':
-            Savemanager.reset(game)
+            Savemanager.reset(farm)
             print('Data save telah direset.')
             input('Tekan Enter untuk melanjutkan...')
         else:
@@ -58,10 +59,10 @@ def tidur():
         print('=================================')
         print('')
         input('tekan enter untuk melanjutkan...')
-        game.farm.next_day()
-        status.Status.ganti_day()
+        farm.farm.next_day()
+        player.ganti_day()
 
-hari()
+hari(player)
 
-if __name__ == "__main__":
-    hari()
+# if __name__ == "__main__":
+#     hari()

@@ -1,6 +1,6 @@
 import random
 import time
-import status
+import player
 import os
 
 merchant_qty_range = (1, 3)
@@ -166,9 +166,9 @@ def handle_lose(enemy):
     if enemy in ["Zombie", "Skeleton", "Spider", "Creeper"]:
         lose_amount = int(enemies[enemy]["lose"] * money_mult)
         
-        current = status.uang.cek()
+        current = player.uang.cek()
         new_money = max(0, current - lose_amount)
-        status.uang.set(new_money)
+        player.uang.set(new_money)
         
         print(f"💸 Kehilangan ${lose_amount} (penalti x{money_mult:.1f})")
         if new_money == 0:
@@ -188,9 +188,9 @@ def handle_lose(enemy):
         money_div = 2 + (level // 2)
         stat_div = 2 + (level // 4)
         
-        current = status.uang.cek()
+        current = player.uang.cek()
         new_money = max(0, current // money_div)
-        status.uang.set(new_money)
+        player.uang.set(new_money)
         
         for s in ["power", "defense", "speed"]:
             player[s] = max(1, player[s] // stat_div)
@@ -225,7 +225,7 @@ def handle_win(enemy, game):
         money_bonus = 500 + boss_encounter_count * 300
         
         game.inventory.tambah_barang(ore, qty, "ore")
-        status.uang.tambah_uang(money_bonus)
+        player.uang.tambah_uang(money_bonus)
         
         print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         print(f"👑 BOSS DIKALAHKAN! (Pertarungan ke-{boss_encounter_count}) 👑")
@@ -249,7 +249,7 @@ def open_chest(game):
     amount = int(random.expovariate(1 / 30)) + 10
     amount = min(amount, 200)
     
-    status.uang.tambah_uang(amount)
+    player.uang.tambah_uang(amount)
     
     print(f"💰 Kamu menemukan ${amount} uang!")
     
@@ -260,13 +260,13 @@ def mine(game):
     global boss_next_spawn_day, boss_cooldown_remaining, boss_encounter_count
     global merchant_active, merchant_request, merchant_countdown
     
-    if status.Status.stamina < 30:
+    if player.Status.stamina < 30:
         print("😭Aku capeeekkk, biarkan aku tidur...")
         pause(2)
         return
     
-    status.Status.kurangi_stamina(30)
-    print(f"Stamina berkurang -30 (sisa: {status.Status.stamina}/{status.Status.max_stamina})")
+    player.Status.kurangi_stamina(30)
+    print(f"Stamina berkurang -30 (sisa: {player.Status.stamina}/{player.Status.max_stamina})")
     pause(1)
     
     clear()
@@ -315,8 +315,8 @@ def mine(game):
         win = fight(enemy)
         if not win:
             handle_lose(enemy)
-            status.Status.kurangi_stamina(10)
-            print(f"Stamina berkurang tambahan -10 karena kalah! (sisa: {status.Status.stamina}/{status.Status.max_stamina})")
+            player.Status.kurangi_stamina(10)
+            print(f"Stamina berkurang tambahan -10 karena kalah! (sisa: {player.Status.stamina}/{player.Status.max_stamina})")
             pause(1)
             
             if enemy == "Boss":
@@ -376,8 +376,8 @@ def upgrade():
         return
     stat = ["power", "defense", "speed"][int(c)-1]
     cost = upgrade_cost[stat] * player[stat]
-    if status.uang.cek() >= cost:
-        status.uang.kurangi_uang(cost)
+    if player.uang.cek() >= cost:
+        player.uang.kurangi_uang(cost)
         player[stat] += 1
         print(f"⬆️ {stat.capitalize()} berhasil di-upgrade!")
     else:
@@ -448,7 +448,7 @@ def merchant(game):
         if game.inventory.inventory[ore]["jumlah"] <= 0:
             del game.inventory.inventory[ore]
         
-        status.uang.tambah_uang(total)
+        player.uang.tambah_uang(total)
         print(f"💰 Berhasil menjual {need} {ore} seharga ${total}")
         pause(1.5)
         
@@ -464,9 +464,9 @@ def main_menu(game):
     while True:
         clear()
         print("=== TEXT MINER RPG ===\n")
-        print(f"Mining ke-{player['mining_count']} (Day {status.Status.day}) - Penambangan")
-        print(f" Uang   : ${status.uang.cek()}")
-        print(f" Stamina: {status.Status.stamina}/{status.Status.max_stamina}")
+        print(f"Mining ke-{player['mining_count']} (Day {player.Status.day}) - Penambangan")
+        print(f" Uang   : ${player.uang.cek()}")
+        print(f" Stamina: {player.Status.stamina}/{player.Status.max_stamina}")
         print(f"⛏ Power: {player['power']} | 🛡 Defense: {player['defense']} | ⚡ Speed: {player['speed']}")
         
         level = get_penalty_level()

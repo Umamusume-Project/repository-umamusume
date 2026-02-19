@@ -2,20 +2,20 @@ import os
 
 class Inventory:
     def __init__(self):
-        self.inventory = {}
-        self.max_slot = 18
-        self.max_stack = 36
+        self.items = {}
+        self.max_slot = 8
+        self.max_stack = 10
 
     def tambah_barang(self, nama_barang, jumlah, tipe):
-        if nama_barang in self.inventory:
-            if self.inventory[nama_barang]["jumlah"] + jumlah <= self.max_stack:
-                self.inventory[nama_barang]["jumlah"] += jumlah
+        if nama_barang in self.items:
+            if self.items[nama_barang]["jumlah"] + jumlah <= self.max_stack:
+                self.items[nama_barang]["jumlah"] += jumlah
             else:
                 print("Stack penuh!")
                 return
         else:
-            if len(self.inventory) < self.max_slot:
-                self.inventory[nama_barang] = {
+            if len(self.items) < self.max_slot:
+                self.items[nama_barang] = {
                     "jumlah": jumlah,
                     "tipe": tipe
                 }
@@ -24,11 +24,11 @@ class Inventory:
                 return
             
     def lihat_inventory(self):
-            if not self.inventory:
+            if not self.items:
                 print("\nInventory kosong!\n")
             else:
                 print("\n===== INVENTORY =====")
-                for barang, data in self.inventory.items():
+                for barang, data in self.items.items():
                     print(f"{barang} ({data['tipe']}) : {data['jumlah']}")
             print("=====================\n")
             input('')
