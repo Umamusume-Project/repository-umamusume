@@ -139,7 +139,7 @@ class Game:
             elif pilih == "2":
                 player.inventory.menu()
             elif pilih == "3":
-                warung.menu_toko()
+                warung.toko()
             elif pilih == "0":
                 return
             else:

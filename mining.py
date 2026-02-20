@@ -36,11 +36,6 @@ class Mining():
             "Emerald": 50,
             "Diamond": 70,
         }
-        self.upgrade_cost = {
-            "power": 45,
-            "defense": 60,
-            "speed": 30,
-        }
         self.events = [
             "Nambang...",
             "Nambang ke bawah...",
@@ -336,29 +331,6 @@ class Mining():
         
         if player["mining_count"] >= 10 and (player["mining_count"] - 10) % 5 == 0:
             open_chest(game)
-
-    def upgrade():
-        clear()
-        print("⚙️ UPGRADE\n")
-        for i, s in enumerate(["power", "defense", "speed"], 1):
-            print(f"{i}. {s.capitalize()} (${upgrade_cost[s] * player[s]})")
-        print("0. Kembali")
-        c = input("\n>> ").strip().lower()
-        if c == "0":
-            return
-        if c not in ["1", "2", "3"]:
-            print("Pilihan tidak valid.")
-            pause(1)
-            return
-        stat = ["power", "defense", "speed"][int(c)-1]
-        cost = upgrade_cost[stat] * player[stat]
-        if player.uang.cek() >= cost:
-            player.uang.kurangi_uang(cost)
-            player[stat] += 1
-            print(f"⬆️ {stat.capitalize()} berhasil di-upgrade!")
-        else:
-            print("❌ Uang tidak cukup, jangan ngutang!")
-        pause()
 
     def merchant(game):
         global merchant_active, merchant_request, merchant_countdown

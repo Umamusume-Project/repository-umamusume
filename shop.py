@@ -26,6 +26,11 @@ class Warung:
             'Emerald': 80,
             'Diamond': 150
         }
+        self.harga_upgrade = {
+            "power": 45,
+            "defense": 60,
+            "speed": 30,
+        }
     
     # ------------------- Func Beli -------------------
     def beli(self, pilihan, jumlah):
@@ -94,10 +99,10 @@ class Warung:
                 harga_jual = self.sell_prices.get(selected_nama, 0) * jumlah
                 
                 player.tambah_uang(harga_jual)
-                player.inventory.items.items[selected_nama]['jumlah'] -= jumlah
+                player.inventory.items[selected_nama]['jumlah'] -= jumlah
                 
-                if player.inventory.items.items[selected_nama]['jumlah'] <= 0:
-                    del player.inventory.items.items[selected_nama]
+                if player.inventory.items[selected_nama]['jumlah'] <= 0:
+                    del player.inventory.items[selected_nama]
                 
                 print(f'Anda menjual {jumlah} {selected_nama} seharga {harga_jual} duit!')
                 print(f'Saldo saat ini: {player.uang} duit')
@@ -107,6 +112,47 @@ class Warung:
             print('Input tidak valid.')
         
         input('Tekan Enter untuk melanjutkan...')
+
+    def upgrade(self):
+        player = self.player
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print('==================')
+        print('     upgrade')
+        print('==================')
+        print('mau upgrade apa?')
+        print('1. power (45)')
+        print('2. defense ')
+        print('3. speed')
+        print('0. kembali')
+        pilihan = input('> ')
+        if pilihan == '0':
+            return
+        elif pilihan == '1':
+            if player.uang >= self.harga_upgrade['power']:
+                player.kurangi_uang(self.harga_upgrade['power'])
+                player.power += 1
+                print('Power berhasil diupgrade!')
+            else:
+                print('Uang tidak cukup untuk upgrade power.')
+        elif pilihan == '2':
+            if player.uang >= self.harga_upgrade['defense']:
+                player.kurangi_uang(self.harga_upgrade['defense'])
+                player.defense += 1
+                print('Defense berhasil diupgrade!')
+            else:
+                print('Uang tidak cukup untuk upgrade defense.')
+        elif pilihan == '3':
+            if player.uang >= self.harga_upgrade['speed']:
+                player.kurangi_uang(self.harga_upgrade['speed'])
+                player.speed += 1
+                print('Speed berhasil diupgrade!')
+            else:
+                print('Uang tidak cukup untuk upgrade speed.')
+        else:
+            print('Pilihan tidak valid.')
+            input('Tekan Enter untuk melanjutkan...')       
+        
+        
     
     # ------------------- UI -------------------
     def menu_toko(self):
@@ -118,6 +164,7 @@ class Warung:
         for pilihan, data in self.items.items():
             print(f"{pilihan}. {data['nama']} ({data['harga']} duit)")
         print('6. Jual Barang')
+        print('7. Upgrade (mining)')
         print('==================')
         print('0. Kembali')
         print('Masukkan pilihanmu:')
@@ -131,6 +178,8 @@ class Warung:
                 break
             elif jawaban == '6':
                 self.jualItem()
+            elif jawaban == '7':
+                self.upgrade()
             elif jawaban in self.items:
                 try:
                     jumlah = int(input('Masukkan jumlah yang ingin dibeli: '))
