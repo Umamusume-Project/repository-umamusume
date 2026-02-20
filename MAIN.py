@@ -10,7 +10,7 @@ player = Player()
 game = Game(player)
 farm = game.farm 
 warung = Warung(player, farm)
-# mining = Mining(player, farm)
+mining = Mining(farm, player, warung, (1, 3))
 Savemanager.load(player, game.farm)
 
 def hari(player):
@@ -31,14 +31,14 @@ def hari(player):
         print('4. inventory')
         print('5. tidur (ganti hari, pulihkan stamina, dan simpan game)')
         print('6. reset game (hapus data save)')
+        print('0. Keluar dari program (tersimpan)')
         print('Masukkan pilihanmu:')
         kegiatan = input('> ')
 
         if kegiatan == '1':
             game.farmMenu(player, warung)
         elif kegiatan == '2':
-            from mining import main_menu
-            main_menu(farm, warung)
+            mining.main_menu()
         elif kegiatan == '3':
             warung.toko()
         elif kegiatan == '4':
@@ -50,6 +50,10 @@ def hari(player):
             Savemanager.reset(game.farm, player)
             print('Data save telah direset.')
             input('Tekan Enter untuk melanjutkan...')
+        elif kegiatan == '0':
+            Savemanager.save(player, game.farm)
+            print('Terima kasih telah bermain!')
+            break
         else:
             print('Pilihan tidak valid')
             input('Tekan Enter untuk melanjutkan...')

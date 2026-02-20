@@ -5,10 +5,11 @@ import os
 merchant_qty_range = (1, 3)
 
 class Mining():
-    def __init__(self, farm, player, merchant_qty_range):
+    def __init__(self, farm, player, warung, merchant_qty_range):
         self.player = player
         self.merchant_qty_range = merchant_qty_range
         self.farm = farm
+        self.warung = warung
         #Bos sama merchant
         self.boss_warning = 0
         self.boss_alive = False
@@ -20,6 +21,7 @@ class Mining():
         self.merchant_request = None
         self.merchant_active = False
         self.merchant_countdown = 0
+        self.slow = 0
         #data mining
         self.enemies = {
             "Zombie": {"power": 1.0, "lose": 15},
@@ -121,9 +123,9 @@ class Mining():
         self.pause()
         base = self.enemies[enemy]["power"]
 
-        if self.player["mining_count"] <= 2:
+        if self.player.mining_count <= 2:
             base *= 0.5
-        elif self.player["mining_count"] <= 4:
+        elif self.player.mining_count <= 4:
             base *= 0.75
         
         scale = 1 + self.enemy_level() * 0.25
@@ -135,7 +137,7 @@ class Mining():
             print("Boss sangat sangat kuat!")
         
         enemy_power = base * scale
-        chance = self.player["defense"] / (self.player["defense"] + enemy_power)
+        chance = self.player.defense / (self.player.defense + enemy_power)
         
         print(f"Kekuatan musuh: {enemy_power:.1f}")
         print(f"Peluang menang kamu: {chance*100:.1f}%")
@@ -150,7 +152,7 @@ class Mining():
             self.pause()
             return False
 
-    def handle_lose(self, player, enemy):
+    def handle_lose(self, enemy):
         level = self.get_penalty_level()
         money_mult = 1 + 0.25 * level
         player = self.player
@@ -161,9 +163,9 @@ class Mining():
             print(f"💸 Kehilangan ${lose_amount} (penalti x{money_mult:.1f})")
 
         elif enemy == "Wither":
-            stat = random.choice([".power", ".defense", ".speed"])
-            if player[stat] > 1:
-                player[stat] -= 1
+            stat = random.choice([player.power, player.defense, player.speed])
+            if stat > 1:
+                stat -= 1
                 print(f"Wither mengutukmu! {stat.capitalize()} turun 1")
             else:
                 print(f"Wither mencoba mengutuk, tapi {stat.capitalize()} sudah minimal!")
@@ -231,28 +233,28 @@ class Mining():
         player = self.player
         farm = self.farm
         
-        if player.Status.stamina < 20:
+        if player.stamina < 20:
             print("Aku capeeekkk, biarkan aku tidur...")
             self.pause(2)
             return
         
-        player.Status.kurangi_stamina(20)
-        print(f"Stamina berkurang -20 (sisa: {player.Status.stamina}/{player.Status.max_stamina})")
+        player.kurangi_stamina(20)
+        print(f"Stamina berkurang -20 (sisa: {player.stamina}/{player.max_stamina})")
         self.pause(1)
         
         self.clear()
         phase = self.get_phase()
-        print(f"⛏ Mining ke-{player['mining_count']} | Fase {phase}\n")
+        print(f"⛏ Mining ke-{player.mining_count} | Fase {phase}\n")
         
         effective_speed = player.speed
-        duration = max(2, 6 - effective_speed + player["slow"])
-        player["slow"] = 0
+        duration = max(2, 6 - effective_speed + self.slow)
+        self.slow = 0
         
         for _ in range(random.randint(3, 5)):
             print(random.choice(self.events))
             self.pause(duration / 3)
         
-        if self.boss_next_spawn_day is None and player["mining_count"] >= 12:
+        if self.boss_next_spawn_day is None and player.mining_count >= 12:
             self.boss_next_spawn_day = random.randint(12, 16)
         
         if self.boss_next_spawn_day is not None and player.mining_count == self.boss_next_spawn_day:
@@ -329,21 +331,22 @@ class Mining():
         elif self.merchant_countdown > 0:
             self.merchant_countdown -= 1
         
-        if player["mining_count"] >= 10 and (player["mining_count"] - 10) % 5 == 0:
-            open_chest(game)
+        if player.mining_count >= 10 and (player.mining_count - 10) % 5 == 0:
+            self.open_chest()
 
-    def merchant(game):
-        global merchant_active, merchant_request, merchant_countdown
+    def merchant(self):
         while True:
-            clear()
+            self.clear()
+            player = self.player
+            merchant_request = self.merchant_request
             print("🧙‍♂️ Pedagang Keliling\n")
             
             # Tampilkan inventory + permintaan pedagang bersamaan
             print("📦 Inventarismu saat ini:")
-            if not game.inventory.inventory:
+            if not player.inventory.lihat_inventory():
                 print("   (Kosong)")
             else:
-                for barang, data in game.inventory.inventory.items():
+                for barang, data in player.inventory.items():
                     print(f"   - {barang} ({data['tipe']}) : {data['jumlah']}")
             
             print("─" * 50)
@@ -353,8 +356,8 @@ class Mining():
                 status_text = "✔ SUDAH DIJUAL" if ore in merchant_request["sold"] else ""
                 print(f"   - {ore} x{qty} {status_text}")
             
-            print(f"\n💎 Pengali harga: x{merchant_request['multiplier']}")
-            print(f"🎁 Bonus per jenis (sekali): ${merchant_request['bonus']}")
+            print(f"\nPengali harga: x{merchant_request['multiplier']}")
+            print(f"Bonus per jenis (sekali): ${merchant_request['bonus']}")
             
             print("\nMenu:")
             print("0. Kembali")
@@ -374,42 +377,44 @@ class Mining():
             
             if choice not in choice_map:
                 print("Pilihan tidak valid.")
-                pause(1)
+                self.pause(1)
                 continue
             
             ore = choice_map[choice]
             need = merchant_request["wanted"][ore]
-            owned = game.inventory.inventory.get(ore, {"jumlah": 0})["jumlah"]
+            owned = player.inventory.get(ore, {"jumlah": 0})["jumlah"]
             
             if owned < need:
-                print(f"❌ Kamu hanya punya {owned} {ore}, tapi pedagang minta {need}!")
-                pause(1.5)
+                print(f"Kamu hanya punya {owned} {ore}, tapi pedagang minta {need}!")
+                self.pause(1.5)
                 continue
             
-            base = need * ores[ore]
+            base = need * self.ores[ore]
             total = int(base * merchant_request["multiplier"])
             if ore not in merchant_request["sold"]:
                 total += merchant_request["bonus"]
                 merchant_request["sold"].add(ore)
             
-            game.inventory.inventory[ore]["jumlah"] -= need
-            if game.inventory.inventory[ore]["jumlah"] <= 0:
-                del game.inventory.inventory[ore]
+            player.inventory[ore]["jumlah"] -= need
+            if player.inventory[ore]["jumlah"] <= 0:
+                del player.inventory[ore]
             
             player.uang.tambah_uang(total)
-            print(f"💰 Berhasil menjual {need} {ore} seharga ${total}")
-            pause(1.5)
+            print(f"Berhasil menjual {need} {ore} seharga ${total}")
+            self.pause(1.5)
             
             if len(merchant_request["sold"]) == len(merchant_request["wanted"]):
-                print("\n🧙‍♂️ Pedagang puas dan pergi.")
-                pause(2)
-                merchant_active = False
+                print("\nPedagang puas dan pergi.")
+                self.pause(2)
+                self.merchant_active = False
                 return
 
-    def main_menu(self, player, warung):
+    def main_menu(self):
         while True:
             self.clear()
-            print("=== TEXT MINER RPG ===\n")
+            player = self.player
+            warung = self.warung
+            print("=== Mining Menu ===\n")
             print(f"Mining ke-{player.mining_count}")
             print(f" Uang   : {player.uang}")
             print(f" Stamina: {player.stamina}/{player.max_stamina}")
@@ -417,15 +422,15 @@ class Mining():
             
             level = self.get_penalty_level()
             if level > 0:
-                print(f"⚠️ Level Penalti: {level}")
+                print(f"Level Penalti: {level}")
             
             if self.merchant_active:
-                print("🧙‍♂️ Pedagang sedang ada di sini!")
+                print("Pedagang sedang ada di sini!")
             else:
                 if self.merchant_countdown > 0:
-                    print(f"🧙‍♂️ Pedagang datang lagi dalam {self.merchant_countdown} mining")
+                    print(f"Pedagang datang lagi dalam {self.merchant_countdown} mining")
                 else:
-                    print("🧙‍♂️ Pedagang sedang dalam perjalanan...")
+                    print("Pedagang sedang dalam perjalanan...")
             
             print("\nMenu:")
             print("1. Mulai Menambang")
@@ -433,16 +438,16 @@ class Mining():
             print("0. Kembali ke menu hari")
             
             if self.merchant_active:
-                print("3. Temui Pedagang 🧙‍♂️")
+                print("3. Temui Pedagang")
             
             choice = input("\n>> ").strip()
             
             if choice == "1":
-                self.mine(player)
+                self.mine()
             elif choice == "2":
-                warung.menu_toko()
+                warung.upgrade()
             elif self.merchant_active and choice == "3":
-                self.merchant(player)
+                self.merchant()
             elif choice == "0":
                 break
             else:
