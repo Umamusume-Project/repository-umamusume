@@ -35,7 +35,7 @@ def hari(player):
         kegiatan = input('> ')
 
         if kegiatan == '1':
-            farm.farmMenu(player, warung)
+            game.farmMenu(player, warung)
         elif kegiatan == '2':
             from mining import main_menu
             main_menu(farm, warung)

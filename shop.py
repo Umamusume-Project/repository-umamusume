@@ -28,7 +28,8 @@ class Warung:
         }
     
     # ------------------- Func Beli -------------------
-    def beli(self, player, pilihan, jumlah):
+    def beli(self, pilihan, jumlah):
+        player = self.player
         if pilihan not in self.items:
             print('Pilihan tidak valid.')
             input('')
@@ -40,7 +41,7 @@ class Warung:
         
         if player.uang >= total:
             player.kurangi_uang(total)
-            self.game.inventory.tambah_barang(nama, jumlah, 'benih')
+            player.inventory.tambah_barang(nama, jumlah, 'benih')
             print("====================================")
             print(f'Anda membeli {jumlah} {nama}!')
             print(f'Total biaya : {total} duit')
@@ -50,7 +51,8 @@ class Warung:
         input('')
     
     # ------------------- Func Jual -------------------
-    def jualItem(self, player):
+    def jualItem(self):
+        player = self.player
         os.system('cls' if os.name == 'nt' else 'clear')
         print('==================')
         print('   Jual Barang')
