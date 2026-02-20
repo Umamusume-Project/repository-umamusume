@@ -3,12 +3,15 @@ from player import Player
 from savemanager import Savemanager
 from shop import Warung
 from inventory import Inventory
-from farming import Game
+from mining import Mining
+from farming import Game, Farm
 
 player = Player()
-farm = Game(player)
+game = Game(player)
+farm = game.farm 
 warung = Warung(player, farm)
-Savemanager.load(player, farm)
+# mining = Mining(player, farm)
+Savemanager.load(player, game.farm)
 
 def hari(player):
     while True:
@@ -32,19 +35,19 @@ def hari(player):
         kegiatan = input('> ')
 
         if kegiatan == '1':
-            farm.farmMenu()
+            farm.farmMenu(player, warung)
         elif kegiatan == '2':
             from mining import main_menu
-            main_menu(farm)
+            main_menu(farm, warung)
         elif kegiatan == '3':
-            warung.menu_toko()
+            warung.toko()
         elif kegiatan == '4':
             player.inventory.menu()
         elif kegiatan == '5':
-            Savemanager.save(farm)
+            Savemanager.save(player, game.farm)
             tidur()
         elif kegiatan == '6':
-            Savemanager.reset(farm)
+            Savemanager.reset(game.farm, player)
             print('Data save telah direset.')
             input('Tekan Enter untuk melanjutkan...')
         else:
@@ -59,7 +62,7 @@ def tidur():
         print('=================================')
         print('')
         input('tekan enter untuk melanjutkan...')
-        farm.farm.next_day()
+        game.farm.next_day()
         player.ganti_day()
 
 hari(player)

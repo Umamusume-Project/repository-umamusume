@@ -1,5 +1,4 @@
 import os
-import player
 import farming
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -14,10 +13,10 @@ class Savemanager:
         player.max_stamina = 20
         player.inventory.items.clear()
         farm.slots = [None] * 4
-        Savemanager.save(farm)
+        Savemanager.save(player, farm)
     
     @staticmethod
-    def save(farm):
+    def save(player, farm):
         with open(file_path, 'w') as file:
             file.write(f'day={player.day}\n')
             file.write(f'stamina={player.stamina}\n')

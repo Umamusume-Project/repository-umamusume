@@ -1,13 +1,11 @@
 day=1
-stamina=100
-max_stamina=100
+stamina=20
+max_stamina=20
 uang=45
 
-[inventory]
-Wheat, 1, hasil panen
-Benih Wheat, 1, benih
+inventory
 
-[farm]
+farm
 None
 None
 None

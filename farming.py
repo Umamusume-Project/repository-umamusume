@@ -98,7 +98,7 @@ class Farm:
             return
         
         hasil = crop.name
-        self.game.inventory.tambah_barang(hasil, 1, 'hasil panen')
+        player.inventory.tambah_barang(hasil, 1, 'hasil panen')
         self.slots[index] = None
         player.kurangi_stamina(10)
         print(f'{hasil} berhasil dipanen!')
@@ -140,7 +140,7 @@ class Game:
             else:
                 continue
 
-    def slots(self, idx):
+    def slot_menu(self, idx):
         while True:
             idx += 1
             crop = self.farm.slots[idx-1]
@@ -190,7 +190,7 @@ class Game:
             try:
                 idx = int(pilih) - 1
                 if 0 <= idx < len(self.farm.slots):
-                    self.slots(idx)
+                    self.slot_menu(idx)
                 elif pilih == "0":
                     return
             except ValueError:
