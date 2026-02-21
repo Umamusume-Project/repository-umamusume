@@ -159,13 +159,14 @@ class Mining():
         
         if enemy in ["Zombie", "Skeleton", "Spider", "Creeper"]:
             lose_amount = int(self.enemies[enemy]["lose"] * money_mult)
-            player.uang.kurangi_uang(lose_amount)
+            player.kurangi_uang(lose_amount)
             print(f"💸 Kehilangan ${lose_amount} (penalti x{money_mult:.1f})")
 
         elif enemy == "Wither":
-            stat = random.choice([player.power, player.defense, player.speed])
-            if stat > 1:
-                stat -= 1
+            stat = random.choice(['power', 'defense', 'speed'])
+            current_stat = getattr(player, stat)
+            if current_stat > 1:
+                setattr(player, stat, current_stat - 1)
                 print(f"Wither mengutukmu! {stat.capitalize()} turun 1")
             else:
                 print(f"Wither mencoba mengutuk, tapi {stat.capitalize()} sudah minimal!")
@@ -173,7 +174,7 @@ class Mining():
         elif enemy == "Boss":
             money_div = 2 + (level // 2)
             stat_div = 2 + (level // 4)
-            player.uang.kurangi_uang(player.uang // money_div)
+            player.kurangi_uang(player.uang // money_div)
             
             for stat in ["power", "defense", "speed"]:
                 player[stat] = max(1, player[stat] // stat_div)
@@ -183,14 +184,14 @@ class Mining():
         
         self.pause(2)
 
-    def handle_win(enemy, self):
+    def handle_win(self, enemy):
         player = self.player
         farm = self.farm
         if enemy == "Spider":
             babies = random.randint(1, 5)
             print(f"Muncul {babies} baby spider!")
             print("👶 Baby spider dikalahkan. Kamu jadi lambat.")
-            player.slow += babies
+            self.slow += babies
             self.pause(2)
         
         if enemy == "Creeper":
@@ -225,7 +226,7 @@ class Mining():
         time.sleep(2)
         amount = int(random.expovariate(1 / 30)) + 10
         amount = min(amount, 40)
-        self.player.uang.tambah_uang(amount)
+        self.player.tambah_uang(amount)
         print(f"💰 Kamu menemukan ${amount} uang!")
         time.sleep(3)
 

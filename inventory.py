@@ -47,3 +47,8 @@ class Inventory:
             elif pilih == "0":
                 break
 
+    def to_dict(self):
+        return {'items': self.items}
+    
+    def from_dict(self, data):
+        self.items = data.get('items', {})

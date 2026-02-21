@@ -19,6 +19,20 @@ class Crop:
 
     def is_ready(self):
         return self.crop_age >= self.grow_time[self.name]
+    
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'crop_age': self.crop_age,
+            'watered_today': self.watered_today
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        crop = cls(data['name'])
+        crop.crop_age = data['crop_age']
+        crop.watered_today = data['watered_today']
+        return crop
 
 
 class Farm:
@@ -115,6 +129,21 @@ class Farm:
                     crop.grow()
                 crop.watered_today = False
 
+    def to_dict(self):
+        return {
+            'slots': [
+                crop.to_dict() if crop else None 
+                for crop in self.slots
+                ]
+        }
+    
+    def from_dict(self, data):
+        slot_data = data.get('slots', [])
+        for i, crop_data in enumerate(slot_data):
+            if crop_data is None:
+                self.slots[i] = None
+            else:
+                self.slots[i] = Crop.from_dict(crop_data)
 
 # ================= MENU =================
 class Game:

@@ -7,7 +7,6 @@ class Player:
         self.stamina = 25
         self.max_stamina = 25
         self.inventory = Inventory()
-        self.farm_slots = [None] * 4
         #STAT MINING (kent . . .)
         self.mining_count = 1
         self.power = 1
@@ -32,3 +31,27 @@ class Player:
     def ganti_day(self):
         self.day += 1
         self.stamina = self.max_stamina
+
+    def to_dict(self):
+        return {
+            'uang': self.uang,
+            'day': self.day,
+            'stamina': self.stamina,
+            'max_stamina': self.max_stamina,
+            'mining_count': self.mining_count,
+            'power': self.power,
+            'defense': self.defense,
+            'speed': self.speed,
+            'inventory': self.inventory.to_dict()
+        }
+    
+    def from_dict(self, data):
+        self.uang = data['uang']
+        self.day = data['day']
+        self.stamina = data['stamina']
+        self.max_stamina = data['max_stamina']
+        self.mining_count = data.get('mining_count', 1)
+        self.power = data.get('power', 1)
+        self.defense = data.get('defense', 1)
+        self.speed = data.get('speed', 1)
+        self.inventory.from_dict(data.get('inventory', {}))

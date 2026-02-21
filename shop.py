@@ -3,7 +3,7 @@ import inventory
 
 class Warung:
     def __init__(self, player, farm):
-        self.game = farm
+        self.farm = farm
         self.player = player
         self.items = {
             '1': {'nama': 'Benih Wheat',    'harga': 20},
@@ -30,6 +30,7 @@ class Warung:
             "power": 45,
             "defense": 60,
             "speed": 30,
+            "max_stamina": 85
         }
     
     # ------------------- Func Beli -------------------
@@ -120,9 +121,10 @@ class Warung:
         print('     upgrade')
         print('==================')
         print('mau upgrade apa?')
-        print('1. power (45)')
-        print('2. defense ')
-        print('3. speed')
+        print(f'1. power ({self.harga_upgrade["power"]})')
+        print(f'2. defense ({self.harga_upgrade["defense"]})')
+        print(f'3. speed ({self.harga_upgrade["speed"]})')
+        print(f'4. max stamina ({self.harga_upgrade["max_stamina"]})')
         print('0. kembali')
         pilihan = input('> ')
         if pilihan == '0':
@@ -148,6 +150,13 @@ class Warung:
                 print('Speed berhasil diupgrade!')
             else:
                 print('Uang tidak cukup untuk upgrade speed.')
+        elif pilihan == '4':
+            if player.uang >= self.harga_upgrade['max_stamina']:
+                player.kurangi_uang(self.harga_upgrade['max_stamina'])
+                player.max_stamina += 20
+                print('Max stamina berhasil diupgrade!')
+            else:
+                print('Uang tidak cukup untuk upgrade max stamina.')
         else:
             print('Pilihan tidak valid.')
             input('Tekan Enter untuk melanjutkan...')       
@@ -164,7 +173,7 @@ class Warung:
         for pilihan, data in self.items.items():
             print(f"{pilihan}. {data['nama']} ({data['harga']} duit)")
         print('6. Jual Barang')
-        print('7. Upgrade (mining)')
+        print('7. Upgrade stats')
         print('==================')
         print('0. Kembali')
         print('Masukkan pilihanmu:')

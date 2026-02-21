@@ -13,7 +13,7 @@ warung = Warung(player, farm)
 mining = Mining(farm, player, warung, (1, 3))
 Savemanager.load(player, game.farm)
 
-def hari(player):
+def main(player):
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
         print('================')
@@ -69,7 +69,4 @@ def tidur():
         game.farm.next_day()
         player.ganti_day()
 
-hari(player)
-
-# if __name__ == "__main__":
-#     hari()
+main(player)
