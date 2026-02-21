@@ -13,26 +13,26 @@ warung = Warung(player, farm)
 mining = Mining(farm, player, warung, (1, 3))
 Savemanager.load(player, game.farm)
 
+def ui():
+    width = 55
+    border = '=' * width
+    print(border)
+    print('Game Farming dan Mining'.center(width))
+    print(border)
+    print(f'Day {player.day}'.center(width))
+    print(f'Uang kamu: {player.uang}'.center(width))
+    print(f'Stamina: {player.stamina}/{player.max_stamina}'.center(width))
+    print(border)
+    print('Pilih kegiatan'.center(width))
+    print(border)
+    print('1. Farming\n2. Mining\n3. Shop\n4. Inventory\n5. Tidur (ganti hari, pulihkan stamina, dan simpan game)\n6. Reset game (hapus data save)\n0. Keluar dari program (tersimpan)')
+    print(border)
+    print('Masukkan pilihanmu:')
+
 def main(player):
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        print('================')
-        print('     projek   ')
-        print('================')
-        print('')
-        print(f'    Day {player.day}')
-        print(f'Uang kamu: {player.uang}')          
-        print(f'stamina: {player.stamina}/{player.max_stamina}')
-        print('')
-        print('Pilih kegiatan')
-        print('1. farming')
-        print('2. mining')
-        print('3. shop')
-        print('4. inventory')
-        print('5. tidur (ganti hari, pulihkan stamina, dan simpan game)')
-        print('6. reset game (hapus data save)')
-        print('0. Keluar dari program (tersimpan)')
-        print('Masukkan pilihanmu:')
+        ui()
         kegiatan = input('> ')
 
         if kegiatan == '1':

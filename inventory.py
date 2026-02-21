@@ -25,6 +25,7 @@ class Inventory:
             
     def lihat_inventory(self):
             if not self.items:
+                print('=====================')
                 print("\nInventory kosong!\n")
             else:
                 print("\n===== INVENTORY =====")

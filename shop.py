@@ -136,6 +136,7 @@ class Warung:
                 print('Power berhasil diupgrade!')
             else:
                 print('Uang tidak cukup untuk upgrade power.')
+            input('')
         elif pilihan == '2':
             if player.uang >= self.harga_upgrade['defense']:
                 player.kurangi_uang(self.harga_upgrade['defense'])
@@ -143,6 +144,7 @@ class Warung:
                 print('Defense berhasil diupgrade!')
             else:
                 print('Uang tidak cukup untuk upgrade defense.')
+            input('')
         elif pilihan == '3':
             if player.uang >= self.harga_upgrade['speed']:
                 player.kurangi_uang(self.harga_upgrade['speed'])
@@ -150,6 +152,7 @@ class Warung:
                 print('Speed berhasil diupgrade!')
             else:
                 print('Uang tidak cukup untuk upgrade speed.')
+            input('')
         elif pilihan == '4':
             if player.uang >= self.harga_upgrade['max_stamina']:
                 player.kurangi_uang(self.harga_upgrade['max_stamina'])
@@ -157,6 +160,7 @@ class Warung:
                 print('Max stamina berhasil diupgrade!')
             else:
                 print('Uang tidak cukup untuk upgrade max stamina.')
+            input('')
         else:
             print('Pilihan tidak valid.')
             input('Tekan Enter untuk melanjutkan...')       
