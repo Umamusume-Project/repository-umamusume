@@ -42,7 +42,7 @@ python MAIN.py
 ├── player.py          # Logika player, untuk data uang, stamina, hari, inventory, dan stats untuk mining
 ├── savemanager.py     # Sistem unutk save data dan reset data
 ├── shop.py            # Sistem toko
-├── save.txt           # File untuk data yang disimpan
+├── save.json          # File untuk data yang disimpan
 └── README.md          # Dokumentasi Project
 ```
 
