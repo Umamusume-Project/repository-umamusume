@@ -23,10 +23,9 @@ class Player:
             print('Uang ga cukup!!')
 
     def kurangi_stamina(self, jumlah):
-        if self.stamina >= jumlah:
-            self.stamina -= jumlah
-        else:
-            print('stamina kurang!!')
+        self.stamina = max(0, self.stamina - jumlah)
+        if self.stamina == 0:
+            print("Stamina kamu habis total!")
 
     def ganti_day(self):
         self.day += 1
