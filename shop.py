@@ -19,12 +19,12 @@ class Warung:
             'Ganja': 200,
             'Tembakau': 90,
             'Jagung': 50,
-            # Ore dari mining (tambah ini supaya bisa dijual)
-            'Coal': 10,
-            'Iron': 25,
-            'Crystal': 40,
-            'Emerald': 80,
-            'Diamond': 150
+            # Ore dari mining
+            'Coal': 1,
+            'Iron': 5,
+            'Crystal': 10,
+            'Emerald': 15,
+            'Diamond': 25
         }
         self.harga_upgrade = {
             "power": 45,

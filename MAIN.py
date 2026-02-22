@@ -52,7 +52,7 @@ def main(player):
             input('Tekan Enter untuk melanjutkan...')
         elif kegiatan == '0':
             Savemanager.save(player, game.farm)
-            print('Terima kasih telah bermain!')
+            print('Terima kasih telah bermain! Data kamu telah disimpan.')
             break
         else:
             print('Pilihan tidak valid')

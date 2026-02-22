@@ -4,8 +4,8 @@ class Player:
     def __init__(self):
         self.uang = 45
         self.day = 1
-        self.stamina = 25
-        self.max_stamina = 25
+        self.max_stamina = 20
+        self.stamina = self.max_stamina
         self.inventory = Inventory()
         #STAT MINING (kent . . .)
         self.mining_count = 1

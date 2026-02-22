@@ -31,11 +31,11 @@ class Mining:
             "Boss": {"power": 6.0, "lose": 0},
         }
         self.ores = {
-            "Coal": 5,
-            "Iron": 15,
-            "Crystal": 25,
-            "Emerald": 50,
-            "Diamond": 70,
+            "Coal",
+            "Iron",
+            "Crystal",
+            "Emerald",
+            "Diamond",
         }
         self.events = [
             "Nambang...",
@@ -243,49 +243,11 @@ class Mining:
         print(f"💰 Kamu menemukan ${amount} uang!")
         time.sleep(3)
 
-    def upgrade_stats(self):
-        while True:
-            self.clear()
-            print('==================')
-            print('       UPGRADE STATS')
-            print('==================')
-            print(f"1. Power      (Level {self.player.power}) - Biaya: {45 * self.player.power}")
-            print(f"2. Defense    (Level {self.player.defense}) - Biaya: {60 * self.player.defense}")
-            print(f"3. Speed      (Level {self.player.speed}) - Biaya: {30 * self.player.speed}")
-            print(f"4. Max Stamina (Max {self.player.max_stamina}) - Biaya: 85")
-            print('0. Kembali')
-            print('==================')
-            pilihan = input('Pilih upgrade (0-4): ').strip()
-
-            if pilihan == '0':
-                return
-
-            stat_map = {'1': ('power', 45), '2': ('defense', 60), '3': ('speed', 30), '4': ('max_stamina', 85)}
-            if pilihan in stat_map:
-                stat, base_cost = stat_map[pilihan]
-                cost = base_cost if stat == 'max_stamina' else base_cost * getattr(self.player, stat)
-
-                if self.player.uang >= cost:
-                    self.player.kurangi_uang(cost)
-                    if stat == 'max_stamina':
-                        self.player.max_stamina += 20
-                        print(f"Max stamina berhasil diupgrade! Sekarang: {self.player.max_stamina}")
-                    else:
-                        setattr(self.player, stat, getattr(self.player, stat) + 1)
-                        print(f"{stat.capitalize()} berhasil diupgrade! Level sekarang: {getattr(self.player, stat)}")
-                else:
-                    print(f'Uang tidak cukup! Butuh ${cost}, kamu punya ${self.player.uang}')
-            
-            else:
-                print('Pilihan tidak valid.')
-            
-            input('Tekan Enter untuk melanjutkan...')
-
     def mine(self):
         player = self.player
         
         if player.stamina < 20:
-            print("Aku capeeekkk, biarkan aku tidur...")
+            print("stamina tidak cukup untuk menambang! (minimal 20 stamina)")
             self.pause(2)
             return
         
@@ -503,7 +465,7 @@ class Mining:
             if choice == "1":
                 self.mine()
             elif choice == "2":
-                self.upgrade_stats()
+                warung.upgrade()
             elif self.merchant_active and choice == "3":
                 self.merchant()
             elif choice == "0":

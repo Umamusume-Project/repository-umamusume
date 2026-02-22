@@ -35,7 +35,7 @@ python MAIN.py
 
 ## Struktur Folder/File
 ```
-├── MAIN.py            # Entry point game, menu utama dan loop game
+├── main.py            # Entry point game, menu utama dan loop game
 ├── farming.py         # Sistem Farming
 ├── inventory.py       # Sistem Inventory
 ├── mining.py          # Sistem Mining
